@@ -1,0 +1,3 @@
+rootProject.name = 'route-planner'
+
+include 'route-planner-server', 'route-planner-webapp'
