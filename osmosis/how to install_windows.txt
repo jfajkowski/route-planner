@@ -1,0 +1,1 @@
+add path_where_you_unzipped_osmosis/bin to your windows path
