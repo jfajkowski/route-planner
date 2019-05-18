@@ -1,0 +1,13 @@
+From postgres prompt invoke [from script directory] but on a new schema!!!! Not at postgres schema!!!!:
+
+pgsnapshot_schema_0.6
+pgsnapshot_schema_0.6_action
+pgsnapshot_schema_0.6_bbox
+pgsnapshot_schema_0.6_linestring
+
+then in cmd run:
+
+osmosis --read-pbf <pbf file> --log-progress --write-pgsql host=<host> database=<schema_name> user=<user> password=<password> 
+
+after that build cities and straight distances tables by invoking in postgres prompt [from script directory]:
+create_cities_and_distances_custom_tables

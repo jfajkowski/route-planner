@@ -1,0 +1,18 @@
+ -- All cities in db
+select distinct name from city_nodes;
+ 
+ -- 3 nearest neighbours of Warsaw (polish name of a city needed!) (straight line: geometry-geometry not by routes!)
+select 
+	(case when city_a = 'Warszawa' then city_b else city_a end) as neighbour, 
+	distance 
+from straight_distances 
+where (city_a = 'Warszawa' or city_b='Warszawa') order by distance asc limit 3;
+
+-- boundaries polygon for Warsaw
+select boundaries from city_nodes where name = 'Warszawa'; 
+
+All nodes for one of polish E routes
+
+select * from relations where id = 172531; 
+select * from relation_members where relation_id = 172531;
+select * from way_nodes where way_id in (select w.id from ways w inner join relation_members rm on w.id = rm.member_id where rm.relation_id = 172531);
