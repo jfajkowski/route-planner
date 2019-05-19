@@ -1,12 +1,17 @@
 create table city_nodes(id,name,geom) as 
 (select id, tags->'name', geom from nodes where tags->'place' = 'city');
 
-create table straight_distances (city_a, city_b, distance) as 
-(select a.name, b.name, st_distance_sphere(a.geom, b.geom)
+alter table city_nodes add constraint PK_CITY_NODES PRIMARY KEY(ID);
+
+create table straight_distances (id, city_a, city_b, distance) as 
+(select row_number() over (order by a.name) as id, a.name, b.name, st_distance_sphere(a.geom, b.geom)
  from city_nodes a, 
  	  city_nodes b, 
  	(SELECT DISTINCT LEAST(a.name, b.name) as name_a, GREATEST(a.name, b.name) as name_b FROM city_nodes a, city_nodes b) names 
-where a.name!=b.name and a.name=names.name_a and b.name=names.name_b);
+where a.name!=b.name and a.name=names.name_a and b.name=names.name_b
+order by a.name);
+
+alter table straight_distances add constraint PK_STRAIGHT_DISTANCES PRIMARY KEY(ID);
 
 alter table city_nodes add boundaries geometry;
 

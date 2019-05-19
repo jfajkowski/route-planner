@@ -1,5 +1,12 @@
-From postgres prompt invoke [from script directory] but on a new schema!!!! Not at postgres schema!!!!:
+Download data of a country/city/region etc. from: http://download.geofabrik.de/europe.html
+And place it in some directory near or in osmosis directory.
 
+From postgres prompt invoke [from script directory]:
+create_db
+
+Change actual postgres database to created one - default: SPDB and invoke:
+
+create_hstore_ext
 pgsnapshot_schema_0.6
 pgsnapshot_schema_0.6_action
 pgsnapshot_schema_0.6_bbox
@@ -7,7 +14,7 @@ pgsnapshot_schema_0.6_linestring
 
 then in cmd run:
 
-osmosis --read-pbf <pbf file> --log-progress --write-pgsql host=<host> database=<schema_name> user=<user> password=<password> 
+osmosis --read-pbf <downloaded pbf file path> --log-progress --write-pgsql host=<host> database=<schema_name> user=<user> password=<password>
 
 after that build cities and straight distances tables by invoking in postgres prompt [from script directory]:
 create_cities_and_distances_custom_tables
