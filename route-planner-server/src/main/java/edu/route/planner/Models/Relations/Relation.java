@@ -1,6 +1,5 @@
-package edu.route.planner.Models.Nodes;
+package edu.route.planner.Models.Relations;
 
-import com.vividsolutions.jts.geom.Geometry;
 import com.vladmihalcea.hibernate.type.basic.PostgreSQLHStoreType;
 import lombok.Data;
 import org.hibernate.annotations.Type;
@@ -10,20 +9,17 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
 
 @Data
 @Entity
-@Table(name = "NODES")
+@Table(name = "RELATIONS")
 @TypeDef(name = "hstore", typeClass = PostgreSQLHStoreType.class)
-public class Node{
-
+public class Relation {
     @Id
-    @NotNull
-    @Column(name = "ID", nullable = false)
+    @Column(name = "ID")
     private Long id;
 
     @Column(name = "VERSION")
@@ -41,7 +37,4 @@ public class Node{
     @Type(type = "hstore")
     @Column(name = "TAGS", columnDefinition = "hstore")
     private Map<String, String> tags = new HashMap<>();
-
-    @Column(name = "GEOM")
-    private Geometry geom;
 }

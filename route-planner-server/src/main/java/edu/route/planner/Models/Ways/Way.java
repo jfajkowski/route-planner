@@ -1,29 +1,29 @@
-package edu.route.planner.Models.Nodes;
+package edu.route.planner.Models.Ways;
 
-import com.vividsolutions.jts.geom.Geometry;
 import com.vladmihalcea.hibernate.type.basic.PostgreSQLHStoreType;
+import edu.route.planner.Models.WayNodes.WayNode;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
+import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 @Data
 @Entity
-@Table(name = "NODES")
+@Table(name = "WAYS")
+@ToString(exclude = {"nodes"})
+@EqualsAndHashCode(exclude = {"nodes"})
 @TypeDef(name = "hstore", typeClass = PostgreSQLHStoreType.class)
-public class Node{
-
+public class Way{
     @Id
-    @NotNull
-    @Column(name = "ID", nullable = false)
+    @Column(name = "ID")
     private Long id;
 
     @Column(name = "VERSION")
@@ -42,6 +42,6 @@ public class Node{
     @Column(name = "TAGS", columnDefinition = "hstore")
     private Map<String, String> tags = new HashMap<>();
 
-    @Column(name = "GEOM")
-    private Geometry geom;
+    @OneToMany(mappedBy = "way", fetch = FetchType.EAGER)
+    private Set<WayNode> nodes = new HashSet<>();
 }
