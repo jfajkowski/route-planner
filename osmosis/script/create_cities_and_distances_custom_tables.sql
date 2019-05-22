@@ -39,3 +39,20 @@ update city_nodes c set boundaries = (select (st_dump(st_polygonize(array(
 group by boundlines.sequence_id
 order by boundlines.sequence_id)
 ))).geom limit 1);
+
+
+create table voronoi_nns as (
+	with city_nn as 
+		(select ng_city.name as name, ST_Collect(voronoi_b.area) as n_areas from 
+			(select (ST_dump(ST_VoronoiPolygons(ST_Collect(geom)))).geom as area from city_nodes) voronoi_a,
+			(select (ST_dump(ST_VoronoiPolygons(ST_Collect(geom)))).geom as area from city_nodes) voronoi_b,
+			(select name, geom from city_nodes) ng_city
+		where st_equals(voronoi_a.area, voronoi_b.area) = false 
+			and st_touches(voronoi_a.area, voronoi_b.area)
+			and st_contains(voronoi_a.area, ng_city.geom)
+		group by ng_city.name)
+	select nn.name city_name, c.name as neighbour_name
+	from city_nn nn, city_nodes c
+	where st_contains(nn.n_areas, c.geom));
+	
+alter table voronoi_nns add constraint pk_voronoi_nns primary key(city_name, neighbour_name);

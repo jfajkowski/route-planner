@@ -8,8 +8,6 @@ Change actual postgres database to created one - default: SPDB and invoke:
 
 create_hstore_ext
 pgsnapshot_schema_0.6
-pgsnapshot_schema_0.6_action
-pgsnapshot_schema_0.6_bbox
 pgsnapshot_schema_0.6_linestring
 
 then in cmd run:
