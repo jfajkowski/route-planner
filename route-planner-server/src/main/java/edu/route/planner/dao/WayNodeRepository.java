@@ -1,5 +1,6 @@
-package edu.route.planner.Models.WayNodes;
+package edu.route.planner.dao;
 
+import edu.route.planner.model.WayNode;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;

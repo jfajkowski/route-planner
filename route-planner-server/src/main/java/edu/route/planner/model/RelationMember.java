@@ -1,4 +1,4 @@
-package edu.route.planner.Models.RelationMembers;
+package edu.route.planner.model;
 
 import lombok.Data;
 

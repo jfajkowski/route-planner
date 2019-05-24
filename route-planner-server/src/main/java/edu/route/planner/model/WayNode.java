@@ -1,7 +1,5 @@
-package edu.route.planner.Models.WayNodes;
+package edu.route.planner.model;
 
-import edu.route.planner.Models.Nodes.Node;
-import edu.route.planner.Models.Ways.Way;
 import lombok.Data;
 
 import javax.persistence.*;

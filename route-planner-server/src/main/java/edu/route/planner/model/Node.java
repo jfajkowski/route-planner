@@ -1,4 +1,4 @@
-package edu.route.planner.Models.Nodes;
+package edu.route.planner.model;
 
 import com.vividsolutions.jts.geom.Geometry;
 import com.vladmihalcea.hibernate.type.basic.PostgreSQLHStoreType;

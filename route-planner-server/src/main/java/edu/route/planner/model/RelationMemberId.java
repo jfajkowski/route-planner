@@ -1,4 +1,4 @@
-package edu.route.planner.Models.RelationMembers;
+package edu.route.planner.model;
 
 import lombok.Data;
 
@@ -7,7 +7,7 @@ import java.io.Serializable;
 
 @Embeddable
 @Data
-public class RelationMemberId implements Serializable {
+class RelationMemberId implements Serializable {
     private Long relationId;
     private Long memberId;
 }

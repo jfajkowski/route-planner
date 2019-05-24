@@ -1,4 +1,4 @@
-package edu.route.planner.Models.StraightDistances;
+package edu.route.planner.model;
 
 import lombok.Data;
 

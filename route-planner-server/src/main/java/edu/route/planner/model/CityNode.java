@@ -1,4 +1,4 @@
-package edu.route.planner.Models.CityNodes;
+package edu.route.planner.model;
 
 import com.vividsolutions.jts.geom.Geometry;
 import lombok.Data;

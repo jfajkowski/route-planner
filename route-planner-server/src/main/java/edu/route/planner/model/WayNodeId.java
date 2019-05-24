@@ -1,11 +1,11 @@
-package edu.route.planner.Models.WayNodes;
+package edu.route.planner.model;
 
 import lombok.Data;
 
 import java.io.Serializable;
 
 @Data
-public class WayNodeId implements Serializable {
+class WayNodeId implements Serializable {
     private Long way;
     private Long node;
 }

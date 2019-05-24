@@ -1,27 +1,23 @@
-package edu.route.planner.Models.Ways;
+package edu.route.planner.model;
 
 import com.vladmihalcea.hibernate.type.basic.PostgreSQLHStoreType;
-import edu.route.planner.Models.WayNodes.WayNode;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.sql.Timestamp;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 @Data
 @Entity
-@Table(name = "WAYS")
-@ToString(exclude = {"nodes"})
-@EqualsAndHashCode(exclude = {"nodes"})
+@Table(name = "RELATIONS")
 @TypeDef(name = "hstore", typeClass = PostgreSQLHStoreType.class)
-public class Way{
+public class Relation {
     @Id
     @Column(name = "ID")
     private Long id;
@@ -41,7 +37,4 @@ public class Way{
     @Type(type = "hstore")
     @Column(name = "TAGS", columnDefinition = "hstore")
     private Map<String, String> tags = new HashMap<>();
-
-    @OneToMany(mappedBy = "way", fetch = FetchType.EAGER)
-    private Set<WayNode> nodes = new HashSet<>();
 }
