@@ -28,3 +28,6 @@ HELP.md
 
 ### VS Code ###
 .vscode/
+
+# SpringBoot local properties
+application-local.properties
