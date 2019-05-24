@@ -1,5 +1,11 @@
+-- wersja 66 miast
 create table city_nodes(id,name,geom) as 
 (select id, tags->'name', geom from nodes where tags->'place' = 'city');
+
+-- wersja 940 miast
+-- create table city_names(name text);
+-- COPY city_names FROM 'sciezka_do_projektu\route-planner\cities\polish_cities.csv' DELIMITER '|';
+-- create table city_nodes(id,name,geom) as (select id,tags->'name', geom from nodes where tags->'place' in ('city','town','village') and tags->'name' in (select name from city_names));
 
 alter table city_nodes add constraint PK_CITY_NODES PRIMARY KEY(ID);
 
@@ -25,7 +31,7 @@ update city_nodes c set boundaries = (select (st_dump(st_polygonize(array(
 			from relation_members 
 			where member_id in (
 				select id 
-				from cities 
+				from city_nodes 
 				where name = c.name)
 			order by relation_id)
 		and tags->'name' = c.name
@@ -35,7 +41,8 @@ update city_nodes c set boundaries = (select (st_dump(st_polygonize(array(
 			and rm.member_id = wn.way_id
 			and n.id = wn.node_id
 		order by rm.sequence_id, wn.sequence_id) bounds
-		group by bounds.way_id, bounds.sequence_id) boundlines
+		group by bounds.way_id, bounds.sequence_id
+		order by bounds.sequence_id) boundlines
 group by boundlines.sequence_id
 order by boundlines.sequence_id)
 ))).geom limit 1);
