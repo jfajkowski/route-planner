@@ -1,12 +1,12 @@
 package edu.route.planner.utils;
 
-import com.vividsolutions.jts.geom.Coordinate;
 import edu.route.planner.model.CityNode;
 import edu.route.planner.model.WayEdge;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.locationtech.jts.geom.Coordinate;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 

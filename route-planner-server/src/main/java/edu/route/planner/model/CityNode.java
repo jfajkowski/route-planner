@@ -1,7 +1,7 @@
 package edu.route.planner.model;
 
-import com.vividsolutions.jts.geom.Geometry;
 import lombok.Data;
+import org.locationtech.jts.geom.Geometry;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

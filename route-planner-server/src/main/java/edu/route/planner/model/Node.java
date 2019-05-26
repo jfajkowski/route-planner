@@ -1,10 +1,10 @@
 package edu.route.planner.model;
 
-import com.vividsolutions.jts.geom.Geometry;
 import com.vladmihalcea.hibernate.type.basic.PostgreSQLHStoreType;
 import lombok.Data;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
+import org.locationtech.jts.geom.Geometry;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
