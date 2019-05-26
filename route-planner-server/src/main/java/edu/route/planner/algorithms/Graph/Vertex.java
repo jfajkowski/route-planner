@@ -33,6 +33,10 @@ public class Vertex {
         this.edges = edges;
     }
 
+    public void addEdge(Edge edge) {
+        this.edges.add(edge);
+    }
+
     public Edge getEdge(Vertex vertex){
         for (Edge edge: edges) {
             if(edge.getDestination().equals(vertex)){
@@ -62,7 +66,7 @@ public class Vertex {
     public Vertex(Long Id, Double heuristic) {
         this.Id = Id;
         this.heuristic = heuristic;
-        edges = new ArrayList<Edge>();
+        edges = new ArrayList<>();
     }
 
     public Vertex(Vertex vertex){

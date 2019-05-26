@@ -1,6 +1,6 @@
 package edu.route.planner.algorithms.Graph;
 
-public abstract class Edge {
+public class Edge {
     private Long Id;
     private Vertex destination;
     private Double distance;
@@ -29,6 +29,11 @@ public abstract class Edge {
         this.distance = distance;
     }
 
+    public Edge(Long Id, Vertex destination, Double distance){
+        this.Id = Id;
+        this.destination = destination;
+        this.distance = distance;
+    }
 
     @Override
     public boolean equals(Object obj){

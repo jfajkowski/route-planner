@@ -12,7 +12,7 @@ public class NodesGraph {
         if(edges.get(edge.getId()) == null) return;
         edges.put(edge.getId(),edge);
         if(vertices.get(edge.getId()) == null) vertices.put(edge.getDestination().getId(), edge.getDestination());
-        if(vertices.get(start.getId()) == null) vertices.put(start.getId(), start);
+        vertices.putIfAbsent(start.getId(), start);
     }
 
     public Edge getEdge(Long Id){
@@ -37,6 +37,10 @@ public class NodesGraph {
 
     public void setVertices(Map<Long, Vertex> vertices) {
         this.vertices = vertices;
+    }
+
+    public void addVertex(Vertex v){
+        this.vertices.put(v.getId(), v);
     }
 
     public NodesGraph() {

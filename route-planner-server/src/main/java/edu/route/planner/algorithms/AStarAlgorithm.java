@@ -11,12 +11,11 @@ class AStarAlgorithm {
     private Vertex destination;
     private NodesGraph graph;
 
-    private List<Edge> resultPath = new ArrayList<Edge>();
     private Set<Vertex> closedVertices = new HashSet<Vertex>();
     private List<Vertex> openVertices = new ArrayList<Vertex>();
-    Map<Vertex, Vertex> cameFrom = new HashMap<Vertex, Vertex>();
-    Map<Vertex, Double> distanceFromStart = new HashMap<Vertex, Double>();
-    Map<Vertex, Double> distanceThroughY = new HashMap<Vertex, Double>();
+    private Map<Vertex, Vertex> cameFrom = new HashMap<Vertex, Vertex>();
+    private Map<Vertex, Double> distanceFromStart = new HashMap<Vertex, Double>();
+    private Map<Vertex, Double> distanceThroughY = new HashMap<Vertex, Double>();
 
     private final Comparator<Vertex> comparator = new Comparator<Vertex>() {
         @Override
@@ -47,7 +46,6 @@ class AStarAlgorithm {
         distanceFromStart.put(start, 0.0);
 
         while(!openVertices.isEmpty()){
-//            Vertex current = getWithLowestCost();
             Vertex current = openVertices.get(0);
             if(current.equals(destination))
                 return reconstructPath(cameFrom, destination);
