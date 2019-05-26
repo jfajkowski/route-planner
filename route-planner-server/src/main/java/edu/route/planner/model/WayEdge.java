@@ -10,8 +10,8 @@ import javax.persistence.Table;
 
 @Data
 @Entity
-@Table(name = "GRAPH_EDGES")
-public class GraphEdge {
+@Table(name = "WAY_EDGES")
+public class WayEdge {
 
     @Id
     @Column(name = "ID")

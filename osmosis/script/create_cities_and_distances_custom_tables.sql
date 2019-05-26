@@ -64,7 +64,7 @@ create table voronoi_nns as (
 	
 alter table voronoi_nns add constraint pk_voronoi_nns primary key(city_name, neighbour_name);
 
-create table GRAPH_EDGES
+create table WAY_EDGES
 (
     ID               bigint           not null,
     SRC_CITY_NODE_ID int              not null,
@@ -74,10 +74,10 @@ create table GRAPH_EDGES
     DURATION         double precision not null
 );
 
-create unique index GRAPH_EDGES_ID_uindex
-    on GRAPH_EDGES (ID);
+create unique index WAY_EDGES_ID_uindex
+    on WAY_EDGES (ID);
 
-alter table GRAPH_EDGES
-    add constraint GRAPH_EDGES_pk
+alter table WAY_EDGES
+    add constraint WAY_EDGES_pk
         primary key (ID);
 

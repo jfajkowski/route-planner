@@ -2,7 +2,7 @@ package edu.route.planner.utils;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import edu.route.planner.model.CityNode;
-import edu.route.planner.model.GraphEdge;
+import edu.route.planner.model.WayEdge;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -65,8 +65,8 @@ public class OsrmTest {
         when(cityNodeA.getGeom().getCoordinate()).thenReturn(new Coordinate(52.2326063, 20.7810167));
         when(cityNodeB.getId()).thenReturn(2L);
         when(cityNodeB.getGeom().getCoordinate()).thenReturn(new Coordinate(52.3400262, 21.163768));
-        GraphEdge graphEdge = Osrm.getFastestRoute(cityNodeA, cityNodeB);
-        assertThat(graphEdge.getSourceCityNodeId()).isEqualTo(1L);
-        assertThat(graphEdge.getDestinationCityNodeId()).isEqualTo(2L);
+        WayEdge wayEdge = Osrm.getFastestRoute(cityNodeA, cityNodeB);
+        assertThat(wayEdge.getSourceCityNodeId()).isEqualTo(1L);
+        assertThat(wayEdge.getDestinationCityNodeId()).isEqualTo(2L);
     }
 }

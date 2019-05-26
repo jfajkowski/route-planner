@@ -2,7 +2,7 @@ package edu.route.planner.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.route.planner.model.CityNode;
-import edu.route.planner.model.GraphEdge;
+import edu.route.planner.model.WayEdge;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -26,7 +26,7 @@ import static java.nio.charset.Charset.defaultCharset;
 @SuppressWarnings("unchecked")
 public abstract class Osrm {
 
-    public static GraphEdge getFastestRoute(CityNode nodeA, CityNode nodeB) throws URISyntaxException, IOException {
+    public static WayEdge getFastestRoute(CityNode nodeA, CityNode nodeB) throws URISyntaxException, IOException {
         String coordinates = prepareCoordinatesString(nodeA, nodeB);
         Map<String, Object> json = getFastestRoute(coordinates);
         return parseGraphEdge(nodeA, nodeB, json);
@@ -44,17 +44,17 @@ public abstract class Osrm {
         return stringBuilder.toString();
     }
 
-    private static GraphEdge parseGraphEdge(CityNode cityNodeA, CityNode cityNodeB, Map<String, Object> json) throws IOException {
+    private static WayEdge parseGraphEdge(CityNode cityNodeA, CityNode cityNodeB, Map<String, Object> json) throws IOException {
         List<Object> routes = (List<Object>) json.get("routes");
         Map<String, Object> bestRoute = (Map<String, Object>) routes.get(0);
 
-        GraphEdge graphEdge = new GraphEdge();
-        graphEdge.setSourceCityNodeId(cityNodeA.getId());
-        graphEdge.setDestinationCityNodeId(cityNodeB.getId());
-        graphEdge.setGeometry(parseGeometry(bestRoute.get("geometry")));
-        graphEdge.setDistance((Integer) bestRoute.get("distance"));
-        graphEdge.setDuration((Double) bestRoute.get("duration"));
-        return graphEdge;
+        WayEdge wayEdge = new WayEdge();
+        wayEdge.setSourceCityNodeId(cityNodeA.getId());
+        wayEdge.setDestinationCityNodeId(cityNodeB.getId());
+        wayEdge.setGeometry(parseGeometry(bestRoute.get("geometry")));
+        wayEdge.setDistance((Integer) bestRoute.get("distance"));
+        wayEdge.setDuration((Double) bestRoute.get("duration"));
+        return wayEdge;
     }
 
     private static Geometry parseGeometry(Object geoJson) throws IOException {
