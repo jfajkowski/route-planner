@@ -63,3 +63,21 @@ create table voronoi_nns as (
 	where st_contains(nn.n_areas, c.geom));
 	
 alter table voronoi_nns add constraint pk_voronoi_nns primary key(city_name, neighbour_name);
+
+create table GRAPH_EDGES
+(
+    ID               bigint           not null,
+    SRC_CITY_NODE_ID int              not null,
+    DST_CITY_NODE_ID int              not null,
+    GEOMETRY         geometry         not null,
+    DISTANCE         double precision not null,
+    DURATION         double precision not null
+);
+
+create unique index GRAPH_EDGES_ID_uindex
+    on GRAPH_EDGES (ID);
+
+alter table GRAPH_EDGES
+    add constraint GRAPH_EDGES_pk
+        primary key (ID);
+
