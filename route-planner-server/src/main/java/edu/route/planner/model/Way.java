@@ -39,8 +39,8 @@ public class Way{
 
     @Type(type = "hstore")
     @Column(name = "TAGS", columnDefinition = "hstore")
-    private Map<String, String> tags = new HashMap<>();
+    private Map<String, String> tags = new HashMap<String, String>();
 
     @OneToMany(mappedBy = "way", fetch = FetchType.EAGER)
-    private Set<WayNode> nodes = new HashSet<>();
+    private Set<WayNode> nodes = new HashSet<WayNode>();
 }

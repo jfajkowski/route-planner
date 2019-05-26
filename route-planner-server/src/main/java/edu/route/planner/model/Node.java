@@ -40,7 +40,7 @@ public class Node{
 
     @Type(type = "hstore")
     @Column(name = "TAGS", columnDefinition = "hstore")
-    private Map<String, String> tags = new HashMap<>();
+    private Map<String, String> tags = new HashMap<String, String>();
 
     @Column(name = "GEOM")
     private Geometry geom;
