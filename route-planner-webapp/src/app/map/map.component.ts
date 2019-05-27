@@ -3,6 +3,8 @@ import * as L from 'leaflet';
 import {LatLng, LayerGroup, Map, tileLayer} from 'leaflet';
 import {CityNodeService} from './city-node.service';
 import {CityNode} from './city-node';
+import {WayEdgeService} from "./way-edge.service";
+import {WayEdge} from "./way-edge";
 
 @Component({
   selector: 'app-map',
@@ -27,7 +29,7 @@ export class MapComponent implements OnInit {
     iconSize: [16, 16]
   });
 
-  constructor(private cityNodeService: CityNodeService) {
+  constructor(private cityNodeService: CityNodeService, private wayEdgeService: WayEdgeService) {
   }
 
   ngOnInit() {
@@ -55,6 +57,12 @@ export class MapComponent implements OnInit {
       L.control.layers(null, {Cities: cities}).addTo(map);
       // Enable cities markers layer by default
       cities.addTo(map);
+
+      let sourceId = cityNodes[0].id;
+      let destinationId = cityNodes[cityNodes.length - 1].id;
+      this.wayEdgeService.findDirectWayEdge(sourceId, destinationId).subscribe((wayEdge: WayEdge) => {
+        L.geoJSON(wayEdge.geometry).addTo(map);
+      })
     });
   }
 

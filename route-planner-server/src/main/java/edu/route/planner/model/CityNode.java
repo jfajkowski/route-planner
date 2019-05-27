@@ -1,5 +1,9 @@
 package edu.route.planner.model;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import edu.route.planner.utils.GeometryDeserializer;
+import edu.route.planner.utils.GeometrySerializer;
 import lombok.Data;
 import org.locationtech.jts.geom.Geometry;
 
@@ -20,6 +24,8 @@ public class CityNode {
     @Column(name = "NAME")
     private String cityName;
 
+    @JsonSerialize(using = GeometrySerializer.class)
+    @JsonDeserialize(using = GeometryDeserializer.class)
     @Column(name = "GEOM")
     private Geometry geom;
 

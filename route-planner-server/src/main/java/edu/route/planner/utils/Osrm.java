@@ -26,43 +26,26 @@ import static java.nio.charset.Charset.defaultCharset;
 @SuppressWarnings("unchecked")
 public abstract class Osrm {
 
-    public static WayEdge getFastestRoute(CityNode nodeA, CityNode nodeB) throws URISyntaxException, IOException {
+    public static WayEdge getFastestRoute(CityNode nodeA, CityNode nodeB) throws IOException {
         String coordinates = prepareCoordinatesString(nodeA, nodeB);
-        Map<String, Object> json = getFastestRoute(coordinates);
-        return parseGraphEdge(nodeA, nodeB, json);
+        try {
+            Map<String, Object> json = getFastestRoute(coordinates);
+            return parseGraphEdge(nodeA, nodeB, json);
+        } catch (URISyntaxException e) {
+            throw new IllegalArgumentException(nodeA.toString() + " " + nodeB.toString());
+        }
     }
 
     private static String prepareCoordinatesString(CityNode... nodes) {
         StringBuilder stringBuilder = new StringBuilder();
         for (CityNode node : nodes) {
-            stringBuilder.append(node.getGeom().getCoordinate().y);
-            stringBuilder.append(',');
             stringBuilder.append(node.getGeom().getCoordinate().x);
+            stringBuilder.append(',');
+            stringBuilder.append(node.getGeom().getCoordinate().y);
             stringBuilder.append(';');
         }
         stringBuilder.deleteCharAt(stringBuilder.length() - 1);
         return stringBuilder.toString();
-    }
-
-    private static WayEdge parseGraphEdge(CityNode cityNodeA, CityNode cityNodeB, Map<String, Object> json) throws IOException {
-        List<Object> routes = (List<Object>) json.get("routes");
-        Map<String, Object> bestRoute = (Map<String, Object>) routes.get(0);
-
-        WayEdge wayEdge = new WayEdge();
-        wayEdge.setSourceCityNodeId(cityNodeA.getId());
-        wayEdge.setDestinationCityNodeId(cityNodeB.getId());
-        wayEdge.setGeometry(parseGeometry(bestRoute.get("geometry")));
-        wayEdge.setDistance((Integer) bestRoute.get("distance"));
-        wayEdge.setDuration((Double) bestRoute.get("duration"));
-        return wayEdge;
-    }
-
-    private static Geometry parseGeometry(Object geoJson) throws IOException {
-        Map<String, Object> map = (Map<String, Object>) geoJson;
-        ObjectMapper mapper = new ObjectMapper();
-        String string = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(map);
-        GeometryJSON g = new GeometryJSON();
-        return g.read(string);
     }
 
     public static Map<String, Object> getFastestRoute(String coordinates) throws URISyntaxException, IOException {
@@ -76,5 +59,34 @@ public abstract class Osrm {
         HttpResponse response = httpClient.execute(request);
         InputStream content = response.getEntity().getContent();
         return jsonParser.parseMap(IOUtils.toString(content, defaultCharset()));
+    }
+
+    private static WayEdge parseGraphEdge(CityNode cityNodeA, CityNode cityNodeB, Map<String, Object> json) throws IOException {
+        List<Object> routes = (List<Object>) json.get("routes");
+        Map<String, Object> bestRoute = (Map<String, Object>) routes.get(0);
+
+        WayEdge wayEdge = new WayEdge();
+        wayEdge.setSourceCityNodeId(cityNodeA.getId());
+        wayEdge.setDestinationCityNodeId(cityNodeB.getId());
+        wayEdge.setGeometry(parseGeometry(bestRoute.get("geometry")));
+        wayEdge.setDistance(parseNumber(bestRoute.get("distance")));
+        wayEdge.setDuration(parseNumber(bestRoute.get("duration")));
+        return wayEdge;
+    }
+
+    private static Double parseNumber(Object numberJson) {
+        if (numberJson instanceof Integer) {
+            return Double.valueOf((Integer) numberJson);
+        } else {
+            return (Double) numberJson;
+        }
+    }
+
+    private static Geometry parseGeometry(Object geoJson) throws IOException {
+        Map<String, Object> map = (Map<String, Object>) geoJson;
+        ObjectMapper mapper = new ObjectMapper();
+        String string = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(map);
+        GeometryJSON g = new GeometryJSON();
+        return g.read(string);
     }
 }
