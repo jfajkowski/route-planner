@@ -1,9 +1,7 @@
 package edu.route.planner.algorithms;
-
 import edu.route.planner.algorithms.Graph.Edge;
 import edu.route.planner.algorithms.Graph.NodesGraph;
 import edu.route.planner.algorithms.Graph.Vertex;
-
 import java.util.*;
 
 class AStarAlgorithm {
@@ -46,18 +44,22 @@ class AStarAlgorithm {
         distanceFromStart.put(start, 0.0);
 
         while(!openVertices.isEmpty()){
+
             Vertex current = openVertices.get(0);
+
             if(current.equals(destination))
                 return reconstructPath(cameFrom, destination);
 
             openVertices.remove(0);
             closedVertices.add(current);
+
             for(Edge edge: current.getEdges()){
                 final Vertex neighbour = edge.getDestination();
                 if(closedVertices.contains(neighbour))
                     continue;
 
                 final double tentativeDistanceFromStart = distanceFromStart.get(current) + distanceBetween(current, neighbour);
+
                 if(!openVertices.contains(neighbour))
                     openVertices.add(neighbour);
                 else if(tentativeDistanceFromStart >= distanceFromStart.get(neighbour))
@@ -68,7 +70,7 @@ class AStarAlgorithm {
                 final Double estimatedDistanceThroughY = distanceFromStart.get(neighbour) + neighbour.getHeuristic();
                 distanceThroughY.put(neighbour, estimatedDistanceThroughY);
 
-                Collections.sort(openVertices, comparator);
+                openVertices.sort(comparator);
             }
         }
 

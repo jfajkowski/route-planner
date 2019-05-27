@@ -15,6 +15,12 @@ public class NodesGraph {
         vertices.putIfAbsent(start.getId(), start);
     }
 
+    public void removeEdge(Vertex start, Edge edge){
+        if(!vertices.containsKey(start.getId())) throw new IllegalArgumentException("Vertex of ID: " + start.getId() + " does not contain in this graph/");
+        vertices.get(start.getId()).removeEdge(edge);
+        edges.remove(edge);
+    }
+
     public Edge getEdge(Long Id){
         return edges.get(Id);
     }
@@ -43,8 +49,9 @@ public class NodesGraph {
         this.vertices.put(v.getId(), v);
     }
 
+
     public NodesGraph() {
-        edges = new HashMap<Long, Edge>();
-        vertices = new HashMap<Long, Vertex>();
+        edges = new HashMap<>();
+        vertices = new HashMap<>();
     }
 }

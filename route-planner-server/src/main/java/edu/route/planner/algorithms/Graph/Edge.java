@@ -2,7 +2,8 @@ package edu.route.planner.algorithms.Graph;
 
 public class Edge {
     private Long Id;
-    private Vertex destination;
+    private Long startId;
+    private Long destinationId;
     private Double distance;
 
     public Long getId() {
@@ -13,12 +14,12 @@ public class Edge {
         Id = id;
     }
 
-    public Vertex getDestination() {
-        return destination;
+    public Long getDestination() {
+        return destinationId;
     }
 
-    public void setDestination(Vertex destination) {
-        this.destination = destination;
+    public void setDestination(Long destinationId) {
+        this.destinationId = destinationId;
     }
 
     public Double getDistance() {
@@ -29,9 +30,9 @@ public class Edge {
         this.distance = distance;
     }
 
-    public Edge(Long Id, Vertex destination, Double distance){
+    public Edge(Long Id, Long startId, Long destinationId, Double distance){
         this.Id = Id;
-        this.destination = destination;
+        this.destinationId = destinationId;
         this.distance = distance;
     }
 
@@ -42,14 +43,13 @@ public class Edge {
         if(getClass() != obj.getClass()) return false;
 
         Edge edge = (Edge)obj;
-        return (destination == edge.destination && distance.equals(edge.distance));
+        return (destinationId.equals(edge.destinationId) && distance.equals(edge.distance));
     }
 
     @Override
     public int hashCode() {
         int result = 17;
-        result = 31 * result + Id.hashCode();
-        result = 31 * result + distance.hashCode();
-        return 31 * result + destination.hashCode();
+        result = 31 * result + Id.hashCode() + distance.hashCode() + destinationId.hashCode() + startId.hashCode();
+        return 31 * result;
     }
 }

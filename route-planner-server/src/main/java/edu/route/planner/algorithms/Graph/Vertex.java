@@ -46,6 +46,10 @@ public class Vertex {
         return null;
     }
 
+    public void removeEdge(Edge edge){
+        edges.remove(edge);
+    }
+
     public boolean pathToExists(Vertex v){
         for(Edge edge: edges){
             if(edge.getDestination().equals(v)){
