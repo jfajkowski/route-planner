@@ -53,8 +53,8 @@ class AStarAlgorithm {
             openVertices.remove(0);
             closedVertices.add(current);
 
-            for(Edge edge: current.getEdges()){
-                final Vertex neighbour = edge.getDestination();
+            for(Edge edge: current.getEdges().values()){
+                final Vertex neighbour = graph.getVertex(edge.getDestinationId());
                 if(closedVertices.contains(neighbour))
                     continue;
 
@@ -78,8 +78,8 @@ class AStarAlgorithm {
     }
 
     private Double distanceBetween(Vertex A, Vertex B){
-        for(Edge e: A.getEdges()){
-            if(e.getDestination().equals(B)){
+        for(Edge e: A.getEdges().values()){
+            if(e.getDestinationId().equals(B.getId())){
                 return e.getDistance();
             }
         }

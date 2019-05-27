@@ -12,52 +12,53 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class AStarAlgorithmTests {
     private NodesGraph graph;
-    private Vertex v1 = new Vertex(1L, 20.0);
-    private Vertex v2 = new Vertex(2L, 21.0);
-    private Vertex v3 = new Vertex(3L, 17.0);
-    private Vertex v4 = new Vertex(4L, 16.0);
-    private Vertex v5 = new Vertex(5L, 10.0);
-    private Vertex v6 = new Vertex(6L, 5.0);
-    private Vertex v7 = new Vertex(7L, 7.0);
-    private Vertex v8 = new Vertex(8L, 0.0);
-    private Vertex v9 = new Vertex(9L, 4.0);
-    private Vertex v10 = new Vertex(10L, 10.0);
+    private Vertex v1 = new Vertex(UUID.randomUUID().toString(), 20.0);
+    private Vertex v2 = new Vertex(UUID.randomUUID().toString(), 21.0);
+    private Vertex v3 = new Vertex(UUID.randomUUID().toString(),  17.0);
+    private Vertex v4 = new Vertex(UUID.randomUUID().toString(),  16.0);
+    private Vertex v5 = new Vertex(UUID.randomUUID().toString(),  10.0);
+    private Vertex v6 = new Vertex(UUID.randomUUID().toString(),  5.0);
+    private Vertex v7 = new Vertex(UUID.randomUUID().toString(),  7.0);
+    private Vertex v8 = new Vertex(UUID.randomUUID().toString(),  0.0);
+    private Vertex v9 = new Vertex(UUID.randomUUID().toString(), 4.0);
+    private Vertex v10 = new Vertex(UUID.randomUUID().toString(),  10.0);
 
-    private Edge e1 = new Edge(1L, v2, 6.0);
-    private Edge e101 = new Edge(101L, v1, 6.0);
-    private Edge e2 = new Edge(2L, v3, 7.0);
-    private Edge e102 = new Edge(102L, v1, 7.0);
-    private Edge e3 = new Edge(3L, v3, 7.0);
-    private Edge e103 = new Edge(103L, v2, 7.0);
-    private Edge e4 = new Edge(4L, v4, 9.0);
-    private Edge e5 = new Edge(5L, v5, 8.0);
-    private Edge e105 = new Edge(105L, v4, 8.0);
-    private Edge e6 = new Edge(6L, v5, 7.0);
-    private Edge e106 = new Edge(106L, v3, 7.0);
-    private Edge e7 = new Edge(7L, v6, 7.0);
-    private Edge e107 = new Edge(107L, v5, 7.0);
-    private Edge e8 = new Edge(8L, v7, 9.0);
-    private Edge e108 = new Edge(108L, v3, 9.0);
-    private Edge e9 = new Edge(9L, v7, 6.0);
-    private Edge e109 = new Edge(109L, v6, 6.0);
-    private Edge e10 = new Edge(10L, v8, 9.0);
-    private Edge e11 = new Edge(11L, v8, 7.0);
-    private Edge e111 = new Edge(111L, v6, 7.0);
-    private Edge e12 = new Edge(12L, v9, 6.0);
-    private Edge e112 = new Edge(112L, v8, 6.0);
-    private Edge e13 = new Edge(13L, v6, 5.0);
-    private Edge e113 = new Edge(113L, v9, 5.0);
-    private Edge e14 = new Edge(14L, v10, 8.0);
-    private Edge e114 = new Edge(114L, v9, 8.0);
-    private Edge e15 = new Edge(15L, v10, 6.0);
-    private Edge e115 = new Edge(115L, v5, 6.0);
-    private Edge e16 = new Edge(16L, v10, 9.0);
-    private Edge e116 = new Edge(116L, v4, 9.0);
+    private Edge e1 = new Edge(UUID.randomUUID(),  v1.getId(), v2.getId(), 6.0);
+    private Edge e101 = new Edge(UUID.randomUUID(), v2.getId(), v1.getId(), 6.0);
+    private Edge e2 = new Edge(UUID.randomUUID(), v1.getId(), v3.getId(), 7.0);
+    private Edge e102 = new Edge(UUID.randomUUID(),  v3.getId(), v1.getId(), 7.0);
+    private Edge e3 = new Edge(UUID.randomUUID(), v2.getId(), v3.getId(), 7.0);
+    private Edge e103 = new Edge(UUID.randomUUID(), v3.getId(), v2.getId(), 7.0);
+    private Edge e4 = new Edge(UUID.randomUUID(), v2.getId(), v4.getId(), 9.0);
+    private Edge e5 = new Edge(UUID.randomUUID(), v4.getId(), v5.getId(), 8.0);
+    private Edge e105 = new Edge(UUID.randomUUID(), v5.getId(), v4.getId(), 8.0);
+    private Edge e6 = new Edge(UUID.randomUUID(), v3.getId(), v5.getId(), 7.0);
+    private Edge e106 = new Edge(UUID.randomUUID(), v5.getId(), v3.getId(), 7.0);
+    private Edge e7 = new Edge(UUID.randomUUID(), v5.getId(), v6.getId(), 7.0);
+    private Edge e107 = new Edge(UUID.randomUUID(), v6.getId(), v5.getId(), 7.0);
+    private Edge e8 = new Edge(UUID.randomUUID(), v3.getId(), v7.getId(), 9.0);
+    private Edge e108 = new Edge(UUID.randomUUID(), v7.getId(), v3.getId(), 9.0);
+    private Edge e9 = new Edge(UUID.randomUUID(), v6.getId(), v7.getId(), 6.0);
+    private Edge e109 = new Edge(UUID.randomUUID(), v7.getId(), v6.getId(), 6.0);
+    private Edge e10 = new Edge(UUID.randomUUID(), v7.getId(), v8.getId(), 9.0);
+    private Edge e11 = new Edge(UUID.randomUUID(), v6.getId(), v8.getId(), 7.0);
+    private Edge e111 = new Edge(UUID.randomUUID(),v8.getId() , v6.getId(), 7.0);
+    private Edge e12 = new Edge(UUID.randomUUID(), v8.getId(), v9.getId(), 6.0);
+    private Edge e112 = new Edge(UUID.randomUUID(), v9.getId(), v8.getId(), 6.0);
+    private Edge e13 = new Edge(UUID.randomUUID(), v9.getId(), v6.getId(), 5.0);
+    private Edge e113 = new Edge(UUID.randomUUID(), v6.getId(), v9.getId(), 5.0);
+    private Edge e14 = new Edge(UUID.randomUUID(), v9.getId(), v10.getId(), 8.0);
+    private Edge e114 = new Edge(UUID.randomUUID(), v10.getId(), v9.getId(), 8.0);
+    private Edge e15 = new Edge(UUID.randomUUID(), v5.getId(), v10.getId(), 6.0);
+    private Edge e115 = new Edge(UUID.randomUUID(), v10.getId(), v5.getId(), 6.0);
+    private Edge e16 = new Edge(UUID.randomUUID(), v4.getId(), v10.getId(), 9.0);
+    private Edge e116 = new Edge(UUID.randomUUID(), v10.getId(), v4.getId(), 9.0);
 
     @Before
     public void SetUpGraph(){

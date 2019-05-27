@@ -1,25 +1,35 @@
 package edu.route.planner.algorithms.Graph;
 
+import java.util.UUID;
+
 public class Edge {
-    private Long Id;
-    private Long startId;
-    private Long destinationId;
+    private String Id;
+    private String startId;
+    private String destinationId;
     private Double distance;
 
-    public Long getId() {
+    public String getId() {
         return Id;
     }
 
-    public void setId(Long id) {
-        Id = id;
+    public void setId(UUID id) {
+        Id = id.toString();
     }
 
-    public Long getDestination() {
+    public String getDestinationId() {
         return destinationId;
     }
 
-    public void setDestination(Long destinationId) {
+    public void setDestinationId(String destinationId) {
         this.destinationId = destinationId;
+    }
+
+    public String getStartId() {
+        return startId;
+    }
+
+    public void setStartId(String startId) {
+        this.startId = startId;
     }
 
     public Double getDistance() {
@@ -30,8 +40,9 @@ public class Edge {
         this.distance = distance;
     }
 
-    public Edge(Long Id, Long startId, Long destinationId, Double distance){
-        this.Id = Id;
+    public Edge(UUID Id, String startId, String destinationId, Double distance){
+        this.Id = Id.toString();
+        this.startId = startId;
         this.destinationId = destinationId;
         this.distance = distance;
     }

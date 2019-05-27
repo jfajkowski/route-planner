@@ -1,20 +1,19 @@
 package edu.route.planner.algorithms.Graph;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class Vertex {
-    private Long Id;
+    private String Id;
     private Double heuristic;
-    private List<Edge> edges;
+    private Map<String, Edge> edges;
     private Double distanceFromStart;
 
-    public Long getId() {
+    public String getId() {
         return Id;
     }
 
-    public void setId(Long id) {
-        Id = id;
+    public void setId(UUID id) {
+        Id = id.toString();
     }
 
     public Double getHeuristic() {
@@ -25,38 +24,30 @@ public class Vertex {
         this.heuristic = heuristic;
     }
 
-    public List<Edge> getEdges() {
+    public Map<String, Edge> getEdges() {
         return edges;
     }
 
-    public void setEdges(List<Edge> edges) {
-        this.edges = edges;
+    public void addEdge(Edge edge) {
+        this.edges.put(edge.getId(), edge);
     }
 
-    public void addEdge(Edge edge) {
-        this.edges.add(edge);
+    public void addEdge(String startId, String destinationId, Double distance) {
+        UUID id = UUID.randomUUID();
+        this.edges.put(id.toString(), new Edge(id, startId, destinationId, distance));
     }
 
     public Edge getEdge(Vertex vertex){
-        for (Edge edge: edges) {
-            if(edge.getDestination().equals(vertex)){
+        for (Edge edge: edges.values()) {
+            if(edge.getDestinationId().equals(vertex.Id)){
                 return edge;
             }
         }
         return null;
     }
 
-    public void removeEdge(Edge edge){
-        edges.remove(edge);
-    }
-
-    public boolean pathToExists(Vertex v){
-        for(Edge edge: edges){
-            if(edge.getDestination().equals(v)){
-                return true;
-            }
-        }
-        return false;
+    public void removeEdge(String edgeId){
+        edges.remove(edgeId);
     }
 
     public Double getDistanceFromStart() {
@@ -67,15 +58,15 @@ public class Vertex {
         this.distanceFromStart = distanceFromStart;
     }
 
-    public Vertex(Long Id, Double heuristic) {
+    public Vertex(String Id, Double heuristic) {
         this.Id = Id;
         this.heuristic = heuristic;
-        edges = new ArrayList<>();
+        edges = new HashMap<>();
     }
 
     public Vertex(Vertex vertex){
         this(vertex.Id, vertex.heuristic);
-        this.edges.addAll(vertex.edges);
+        this.edges.putAll(vertex.edges);
     }
 
     @Override
@@ -91,7 +82,7 @@ public class Vertex {
     @Override
     public int hashCode() {
         int result = 17;
-        result = 31 * result + Id.intValue() + heuristic.intValue();
+        result = 31 * result + Id.hashCode() + heuristic.intValue();
         return 31 * (result + edges.size());
     }
 }
