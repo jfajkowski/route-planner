@@ -1,3 +1,2 @@
-rootProject.name = 'route-planner'
-
-include 'route-planner-server', 'route-planner-webapp'
+include 'route-planner-server'
+include 'route-planner-webapp'
