@@ -2,86 +2,87 @@ package edu.route.planner.algorithms;
 
 import edu.route.planner.algorithms.Graph.Edge;
 import edu.route.planner.algorithms.Graph.NodesGraph;
+import edu.route.planner.algorithms.Graph.Path;
 import edu.route.planner.algorithms.Graph.Vertex;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.PriorityQueue;
 
 public class YenAlgorithm {
     private Vertex start;
     private Vertex finish;
     private NodesGraph graph;
     private List<List<Edge>> kShortestPaths = new ArrayList<>();
-    private int k;
+    private int K;
 
     public YenAlgorithm(int shortestPathsCount, Vertex start, Vertex finish, NodesGraph graph){
         this.start = start;
         this.finish = finish;
         this.graph = graph;
-        this.k = shortestPathsCount;
+        this.K = shortestPathsCount;
     }
 
     public List<List<Edge>> calculate(){
-        List<List<Edge>> prevShortestPaths = new ArrayList<>();
-        Vertex spurVertex = null;
+        Vertex spurVertex;
         List<Edge> rootPath;
+        PriorityQueue<Path> candidates = new PriorityQueue<>();
         AStarAlgorithm aStar = new AStarAlgorithm(start, finish, graph);
-        Vertex tempStart = new Vertex(start);
         NodesGraph tempGraph = new NodesGraph(graph);
 
-        prevShortestPaths.add(aStar.calculate());
+        List<Edge> shortestPath = aStar.calculate();
+        kShortestPaths.add(shortestPath);
 
-        while(k > 0){
-            List<Edge> previousPath = prevShortestPaths.get(k - 1);
+        for(int k = 1; k < K; k++){
+            List<Edge> previousPath = kShortestPaths.get(k - 1);
 
             for(int i = 0; i < previousPath.size(); ++i){
 
-                if(spurVertex == null) spurVertex = tempStart;
-                else spurVertex = tempGraph.getVertex(previousPath.get(i).getDestinationId());
+                spurVertex = tempGraph.getVertex(previousPath.get(i).getStartId());
 
-                rootPath = getPathToVertex(prevShortestPaths.get(k - 1), spurVertex, tempGraph.getVertex(previousPath.get(i).getDestinationId()));
+                rootPath = getPathToVertex(previousPath, previousPath.get(0).getStartId(), spurVertex.getId());
 
-                for(List<Edge> path: prevShortestPaths){
+                for(List<Edge> path: kShortestPaths){
 
-                    List<Edge> stubPath = getPathToVertex(path, tempStart, tempGraph.getVertex(previousPath.get(i).getDestinationId()));
+                    List<Edge> stubPath = getPathToVertex(path, path.get(0).getStartId(), spurVertex.getId());
 
-                    assert rootPath != null;
-                    if(rootPath.equals(stubPath)){
+                    if(stubPath.equals(rootPath)){
                         Edge re = path.get(i);
 
                         tempGraph.removeEdge(re);
-
                     }
                 }
 
                 assert rootPath != null;
                 for(Edge rootPathEdge: rootPath){
-                    if(rootPathEdge.getStartId().equals(spurVertex.getId()))
+                    if(!rootPathEdge.getStartId().equals(spurVertex.getId()))
                         tempGraph.removeVertex(rootPathEdge.getStartId());
                 }
 
                 List<Edge> spurPath = new AStarAlgorithm(spurVertex, finish, tempGraph).calculate();
 
                 if(spurPath != null){
-                    List<Edge> totalPath = new ArrayList<>(rootPath);
-                    totalPath.addAll(spurPath);
+                    Path totalPath = new Path(rootPath);
+                    totalPath.addPath(spurPath);
 
-                    if(!kShortestPaths.contains(totalPath))
-                        kShortestPaths.add(totalPath);
+                    if(!candidates.contains(totalPath))
+                        candidates.add(totalPath);
                 }
-
 
                 tempGraph = new NodesGraph(graph);
             }
-            --k;
 
             boolean isNewPath = false;
             while (!isNewPath){
-                previousPath = kShortestPaths.get(0);
+                Path sp = candidates.poll();
+                if(sp != null) shortestPath = sp.edges;
+                else shortestPath = null;
+
                 isNewPath = true;
-                if(previousPath != null){
-                    for(List<Edge> p : prevShortestPaths){
-                        if(p.equals(previousPath)){
+                if(shortestPath != null){
+                    for(List<Edge> p : kShortestPaths){
+                        if(p.equals(shortestPath)){
                             isNewPath = false;
                             break;
                         }
@@ -89,19 +90,21 @@ public class YenAlgorithm {
                 }
             }
 
-            if(previousPath == null) break;
+            if(shortestPath == null) break;
 
-            kShortestPaths.add(previousPath);
+            kShortestPaths.add(shortestPath);
         }
-        return null;
+        return kShortestPaths;
     }
 
-    private List<Edge> getPathToVertex(List<Edge> path, Vertex start, Vertex end){
-        if(start.equals(end)) return null;
+    private List<Edge> getPathToVertex(List<Edge> path, String startId, String endId){
         List<Edge> result = new ArrayList<>();
+        if(startId.equals(endId)){
+            return result;
+        }
 
         for(Edge edge: path){
-            if(!edge.getDestinationId().equals(end.getId()))
+            if(!edge.getDestinationId().equals(endId))
                 result.add(edge);
             else {
                 result.add(edge);
