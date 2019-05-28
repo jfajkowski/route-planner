@@ -10,13 +10,12 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class AStarAlgorithmTests {
+public class YennAlgorithmTests {
     private NodesGraph graph;
     private Vertex v1 = new Vertex(UUID.randomUUID().toString(), 20.0);
     private Vertex v2 = new Vertex(UUID.randomUUID().toString(), 21.0);
@@ -109,62 +108,12 @@ public class AStarAlgorithmTests {
     }
 
     @Test
-    public void getShortestPathFromV1ToV8(){
-        List<Edge> expected = new ArrayList<>();
-        expected.add(e2);
-        expected.add(e8);
-        expected.add(e10);
+    public void getShortestPathWhenKIsOne(){
+        List<List<Edge>> kYenPath = new YenAlgorithm(1, v1, v10, graph).calculate();
+        List<Edge> shortestPath = new AStarAlgorithm(v1, v10, graph).calculate();
 
-        testShortestPath(v1, v8, expected);
+        Assert.assertEquals(1, kYenPath.size());
+        Assert.assertArrayEquals(shortestPath.toArray(), kYenPath.get(0).toArray());
     }
 
-    @Test
-    public void getShortestPathFromV1ToV9(){
-        List<Edge> expected = new ArrayList<>();
-        expected.add(e2);
-        expected.add(e6);
-        expected.add(e7);
-        expected.add(e113);
-
-        testShortestPath(v1, v9, expected);
-    }
-
-    @Test
-    public void getShortestPathFromV9ToV1(){
-        List<Edge> expected = new ArrayList<>();
-        expected.add(e13);
-        expected.add(e107);
-        expected.add(e106);
-        expected.add(e102);
-
-        testShortestPath(v9, v1, expected);
-    }
-
-    @Test
-    public void getShortestPathFromV1ToV4(){
-        List<Edge> expected = new ArrayList<>();
-        expected.add(e1);
-        expected.add(e4);
-
-        testShortestPath(v1, v4, expected);
-    }
-
-    @Test
-    public void getShortestPathFromV4ToV1(){
-        List<Edge> expected = new ArrayList<>();
-        expected.add(e5);
-        expected.add(e106);
-        expected.add(e102);
-
-        testShortestPath(v4, v1, expected);
-    }
-
-
-    private void testShortestPath(Vertex start, Vertex finish, List<Edge> expectedPath){
-        AStarAlgorithm algorithm = new AStarAlgorithm(start, finish, graph);
-
-        List<Edge> path = algorithm.calculate();
-
-        Assert.assertArrayEquals(expectedPath.toArray(), path.toArray());
-    }
 }
