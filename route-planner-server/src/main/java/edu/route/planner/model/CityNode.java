@@ -28,8 +28,4 @@ public class CityNode {
     @JsonDeserialize(using = GeometryDeserializer.class)
     @Column(name = "GEOM")
     private Geometry geom;
-
-    @Column(name = "BOUNDARIES")
-    private Geometry boundaries;
-
 }

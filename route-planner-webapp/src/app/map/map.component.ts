@@ -54,16 +54,23 @@ export class MapComponent implements OnInit {
           }
         }).addTo(cities);
       }
-      L.control.layers(null, {Cities: cities}).addTo(map);
-      // Enable cities markers layer by default
-      cities.addTo(map);
 
-      let sourceId = cityNodes[0].id;
-      let destinationId = cityNodes[cityNodes.length - 1].id;
-      this.wayEdgeService.findDirectWayEdge(sourceId, destinationId).subscribe((wayEdge: WayEdge) => {
-        L.geoJSON(wayEdge.geometry).addTo(map);
-      })
+      this.wayEdgeService.findAll().subscribe((wayEdges: WayEdge[]) => {
+        // Add way markers to the map
+        const ways: LayerGroup = new LayerGroup();
+        for (const wayEdge of wayEdges) {
+          L.geoJSON(wayEdge.geometry).addTo(ways);
+        }
+
+        L.control.layers(null, {Cities: cities, Ways: ways}).addTo(map);
+
+        // Enable cities and ways layers by default
+        cities.addTo(map);
+        ways.addTo(map);
+      });
     });
+
+
   }
 
 }

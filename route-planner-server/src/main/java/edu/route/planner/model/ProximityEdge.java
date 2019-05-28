@@ -9,19 +9,16 @@ import javax.persistence.Table;
 
 @Data
 @Entity
-@Table(name = "STRAIGHT_DISTANCES")
-public class StraightDistance {
+@Table(name = "VORONOI_NNS")
+public class ProximityEdge {
 
     @Id
     @Column(name = "ID")
     private Long id;
 
-    @Column(name = "CITY_A")
-    private String cityA;
+    @Column(name = "CITY_A_ID")
+    private Long cityAId;
 
-    @Column(name = "CITY_B")
-    private String cityB;
-
-    @Column(name = "DISTANCE")
-    private Double distance;
+    @Column(name = "CITY_B_ID")
+    private Long cityBId;
 }

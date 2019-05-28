@@ -1,44 +1,38 @@
 package edu.route.planner.controller;
 
-import edu.route.planner.dao.CityNodeRepository;
-import edu.route.planner.dao.WayEdgeRepository;
-import edu.route.planner.model.CityNode;
 import edu.route.planner.model.WayEdge;
-import edu.route.planner.utils.Osrm;
+import edu.route.planner.service.WayEdgeService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
-
-import static java.util.Arrays.asList;
-
 @RestController
 public class WayEdgeController {
 
-    private final WayEdgeRepository wayEdgeRepository;
-    private final CityNodeRepository cityNodeRepository;
+    private final WayEdgeService wayEdgeService;
 
-    public WayEdgeController(WayEdgeRepository wayEdgeRepository, CityNodeRepository cityNodeRepository) {
-        this.wayEdgeRepository = wayEdgeRepository;
-        this.cityNodeRepository = cityNodeRepository;
+    public WayEdgeController(WayEdgeService wayEdgeService) {
+        this.wayEdgeService = wayEdgeService;
+    }
+
+    @GetMapping("wayEdges/all")
+    public Iterable<WayEdge> findAll() {
+        return wayEdgeService.findAll();
     }
 
     @GetMapping("wayEdges/direct")
-    public WayEdge findDirectWayEdge(
+    public WayEdge findDirect(
             @RequestParam("source") Long sourceCityNodeId,
-            @RequestParam("destination") Long destinationCityNodeId) throws IOException {
+            @RequestParam("destination") Long destinationCityNodeId) {
+        return wayEdgeService.findDirect(sourceCityNodeId, destinationCityNodeId);
+    }
 
-        Optional<WayEdge> result = wayEdgeRepository.findByCityNodeIds(sourceCityNodeId, destinationCityNodeId);
-        if (result.isEmpty()) {
-            List<Long> cityNodeIds = asList(sourceCityNodeId, destinationCityNodeId);
-            Iterator<CityNode> cityNodeIterator = cityNodeRepository.findAllById(cityNodeIds).iterator();
-            return Osrm.getFastestRoute(cityNodeIterator.next(), cityNodeIterator.next());
-        } else {
-            return result.get();
-        }
+    @GetMapping("wayEdges/optimal")
+    public Iterable<WayEdge> findOptimal(
+            @RequestParam("source") Long sourceCityNodeId,
+            @RequestParam("destination") Long destinationCityNodeId,
+            @RequestParam("distanceBuffer") Double distanceBuffer,
+            @RequestParam("durationBuffer") Double durationBuffer) {
+        return wayEdgeService.findOptimal(sourceCityNodeId, destinationCityNodeId, distanceBuffer, durationBuffer);
     }
 }

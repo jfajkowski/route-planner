@@ -10,6 +10,7 @@ import java.util.Optional;
 
 @Repository
 public interface WayEdgeRepository extends CrudRepository<WayEdge, Long> {
+
     @Query("from WayEdge we where we.sourceCityNodeId=:a and we.destinationCityNodeId=:b")
     Optional<WayEdge> findByCityNodeIds(@Param("a") Long sourceCityNodeId, @Param("b") Long destinationCityNodeId);
 }

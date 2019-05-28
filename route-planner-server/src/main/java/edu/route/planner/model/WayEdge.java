@@ -7,10 +7,9 @@ import edu.route.planner.utils.GeometrySerializer;
 import lombok.Data;
 import org.locationtech.jts.geom.Geometry;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+
+import static javax.persistence.GenerationType.IDENTITY;
 
 @Data
 @Entity
@@ -18,6 +17,7 @@ import javax.persistence.Table;
 public class WayEdge {
 
     @Id
+    @GeneratedValue(strategy = IDENTITY)
     @Column(name = "ID")
     private Long id;
 

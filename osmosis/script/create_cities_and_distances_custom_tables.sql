@@ -19,56 +19,29 @@ order by a.name);
 
 alter table straight_distances add constraint PK_STRAIGHT_DISTANCES PRIMARY KEY(ID);
 
-alter table city_nodes add boundaries geometry;
-
-update city_nodes c set boundaries = (select (st_dump(st_polygonize(array(
- select st_makeLine(boundlines.lines) from 
-	(select way_id, sequence_id, st_makeLine(bounds.geom) lines
-	from (
-		select geom, way_id, rm.sequence_id from way_nodes wn, relation_members rm, nodes n,
-		(select id from relations where id in (
-			select distinct relation_id 
-			from relation_members 
-			where member_id in (
-				select id 
-				from city_nodes 
-				where name = c.name)
-			order by relation_id)
-		and tags->'name' = c.name
-		and tags->'type' = 'boundary'
-		order by version desc limit 1) rel
-		where rm.relation_id = rel.id
-			and rm.member_id = wn.way_id
-			and n.id = wn.node_id
-		order by rm.sequence_id, wn.sequence_id) bounds
-		group by bounds.way_id, bounds.sequence_id
-		order by bounds.sequence_id) boundlines
-group by boundlines.sequence_id
-order by boundlines.sequence_id)
-))).geom limit 1);
-
-
 create table voronoi_nns as (
-	with city_nn as 
-		(select ng_city.name as name, ST_Collect(voronoi_b.area) as n_areas from 
+    with city_nn as
+             (select ng_city.id as id, ST_Collect(voronoi_b.area) as n_areas
+              from
 			(select (ST_dump(ST_VoronoiPolygons(ST_Collect(geom)))).geom as area from city_nodes) voronoi_a,
 			(select (ST_dump(ST_VoronoiPolygons(ST_Collect(geom)))).geom as area from city_nodes) voronoi_b,
-			(select name, geom from city_nodes) ng_city
-		where st_equals(voronoi_a.area, voronoi_b.area) = false 
+            (select id, geom from city_nodes) ng_city
+              where st_equals(voronoi_a.area, voronoi_b.area) = false
 			and st_touches(voronoi_a.area, voronoi_b.area)
 			and st_contains(voronoi_a.area, ng_city.geom)
-		group by ng_city.name)
-	select nn.name city_name, c.name as neighbour_name
-	from city_nn nn, city_nodes c
-	where st_contains(nn.n_areas, c.geom));
-	
-alter table voronoi_nns add constraint pk_voronoi_nns primary key(city_name, neighbour_name);
+              group by ng_city.id)
+    select nn.id as city_a_id, c.id as city_b_id
+    from city_nn nn, city_nodes c
+    where st_contains(nn.n_areas, c.geom));
+
+alter table voronoi_nns
+    add column id bigserial primary key;
 
 create table WAY_EDGES
 (
-    ID               bigint           not null,
-    SRC_CITY_NODE_ID int              not null,
-    DST_CITY_NODE_ID int              not null,
+    ID               bigserial        not null,
+    SRC_CITY_NODE_ID bigint           not null,
+    DST_CITY_NODE_ID bigint           not null,
     GEOMETRY         geometry         not null,
     DISTANCE         double precision not null,
     DURATION         double precision not null
