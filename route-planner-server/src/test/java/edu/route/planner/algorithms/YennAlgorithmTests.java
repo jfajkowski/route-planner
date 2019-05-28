@@ -10,6 +10,8 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -105,6 +107,37 @@ public class YennAlgorithmTests {
         graph.addVertex(v8);
         graph.addVertex(v9);
         graph.addVertex(v10);
+
+        graph.addEdge(e2);
+        graph.addEdge(e1);
+        graph.addEdge(e101);
+        graph.addEdge(e3);
+        graph.addEdge(e4);
+        graph.addEdge(e8);
+        graph.addEdge(e102);
+        graph.addEdge(e103);
+        graph.addEdge(e6);
+        graph.addEdge(e5);
+        graph.addEdge(e16);
+        graph.addEdge(e106);
+        graph.addEdge(e7);
+        graph.addEdge(e105);
+        graph.addEdge(e15);
+        graph.addEdge(e107);
+        graph.addEdge(e9);
+        graph.addEdge(e11);
+        graph.addEdge(e113);
+        graph.addEdge(e108);
+        graph.addEdge(e10);
+        graph.addEdge(e109);
+        graph.addEdge(e12);
+        graph.addEdge(e111);
+        graph.addEdge(e112);
+        graph.addEdge(e13);
+        graph.addEdge(e14);
+        graph.addEdge(e114);
+        graph.addEdge(e115);
+        graph.addEdge(e116);
     }
 
     @Test
@@ -116,4 +149,27 @@ public class YennAlgorithmTests {
         Assert.assertArrayEquals(shortestPath.toArray(), kYenPath.get(0).toArray());
     }
 
+    @Test
+    public void get2ShoretstPathsFromv1Tov10(){
+        List<Edge> shortestPath1 = new AStarAlgorithm(v1, v10, graph).calculate();
+        List<Edge> shortestPath2 = Arrays.asList(e1, e4, e16);
+        List<List<Edge>> kYenPath = new YenAlgorithm(2, v1, v10, graph).calculate();
+
+
+        Assert.assertEquals(2, kYenPath.size());
+        Assert.assertArrayEquals(shortestPath1.toArray(), kYenPath.get(0).toArray());
+        Assert.assertArrayEquals(shortestPath2.toArray(), kYenPath.get(1).toArray());
+    }
+
+    @Test
+    public void get2ShoretstPathsFromv1Tov8(){
+        List<Edge> shortestPath1 = new AStarAlgorithm(v1, v8, graph).calculate();
+        List<Edge> shortestPath2 = Arrays.asList(e2, e6, e7, e11);
+        List<List<Edge>> kYenPath = new YenAlgorithm(2, v1, v8, graph).calculate();
+
+
+        Assert.assertEquals(2, kYenPath.size());
+        Assert.assertArrayEquals(shortestPath1.toArray(), kYenPath.get(0).toArray());
+        Assert.assertArrayEquals(shortestPath2.toArray(), kYenPath.get(1).toArray());
+    }
 }
