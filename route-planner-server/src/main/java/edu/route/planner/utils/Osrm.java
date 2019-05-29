@@ -50,7 +50,7 @@ public abstract class Osrm {
 
     public static Map<String, Object> getFastestRoute(String coordinates) throws URISyntaxException, IOException {
         JsonParser jsonParser = JsonParserFactory.getJsonParser();
-        String url = String.format("http://localhost:5000/route/v1/car/%s?geometries=geojson&overview=full", coordinates);
+        String url = String.format("http://router.project-osrm.org/route/v1/car/%s?geometries=geojson&overview=full", coordinates);
         HttpClient httpClient = HttpClients.createDefault();
         URIBuilder builder = new URIBuilder(url);
         URI uri = builder.build();

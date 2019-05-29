@@ -21,4 +21,16 @@ public class ProximityEdge {
 
     @Column(name = "CITY_B_ID")
     private Long cityBId;
+
+    public Long getId() {
+        return id;
+    }
+
+    public Long getCityAId() {
+        return cityAId;
+    }
+
+    public Long getCityBId() {
+        return cityBId;
+    }
 }

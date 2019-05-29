@@ -48,4 +48,48 @@ public class WayEdge {
         this.distance = distance;
         this.duration = duration;
     }
+
+    public Double getDistance() {
+        return distance;
+    }
+
+    public void setDistance(Double distance) {
+        this.distance = distance;
+    }
+
+    public Double getDuration() {
+        return duration;
+    }
+
+    public void setDuration(Double duration) {
+        this.duration = duration;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public Long getSourceCityNodeId() {
+        return sourceCityNodeId;
+    }
+
+    public Long getDestinationCityNodeId() {
+        return destinationCityNodeId;
+    }
+
+    public Geometry getGeometry() {
+        return geometry;
+    }
+
+    public void setSourceCityNodeId(Long sourceCityNodeId) {
+        this.sourceCityNodeId = sourceCityNodeId;
+    }
+
+    public void setDestinationCityNodeId(Long destinationCityNodeId) {
+        this.destinationCityNodeId = destinationCityNodeId;
+    }
+
+    public void setGeometry(Geometry geometry) {
+        this.geometry = geometry;
+    }
 }

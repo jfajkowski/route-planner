@@ -35,6 +35,35 @@
     </div>
   </div>
 
+  <div class="w3-row-padding w3-margin-bottom">
+    <div class="w3-quarter">
+      <div class="w3-container w3-blue w3-padding-16">
+        <button>Print all routes</button>
+      </div>
+    </div>
+    <div class="w3-quarter">
+      <div class="w3-container w3-blue w3-padding-16">
+        <label>
+          <input [ngModel]="sourceCity.id" title="sourceId" type="text" disabled>
+        </label>
+
+        <h4>Source City</h4>
+      </div>
+    </div>
+    <div class="w3-quarter">
+      <div class="w3-container w3-blue w3-padding-16">
+        <label>
+          <input [ngModel]="destinationCity.id" title="destinationId" type="text" disabled>
+        </label>
+
+        <h4>Destination City</h4>
+      </div>
+    </div>
+    <div class="w3-quarter">
+
+    </div>
+  </div>
+
   <div class="w3-panel">
     <div class="w3-row-padding" style="margin:0 -16px">
       <div class="w3-third"

@@ -28,4 +28,12 @@ public class CityNode {
     @JsonDeserialize(using = GeometryDeserializer.class)
     @Column(name = "GEOM")
     private Geometry geom;
+
+    public Long getId() {
+        return id;
+    }
+
+    public Geometry getGeom() {
+        return geom;
+    }
 }
