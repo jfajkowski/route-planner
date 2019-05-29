@@ -37,4 +37,15 @@ public class WayEdge {
 
     @Column(name = "DURATION")
     private Double duration;
+
+    public WayEdge() {
+
+    }
+
+    public WayEdge(Long sourceCityNodeId, Long destinationCityNodeId, Double distance, Double duration) {
+        this.sourceCityNodeId = sourceCityNodeId;
+        this.destinationCityNodeId = destinationCityNodeId;
+        this.distance = distance;
+        this.duration = duration;
+    }
 }

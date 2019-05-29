@@ -1,5 +1,6 @@
 package edu.route.planner.service;
 
+import edu.route.planner.algorithms.BruteForce;
 import edu.route.planner.dao.CityNodeRepository;
 import edu.route.planner.dao.ProximityEdgeRepository;
 import edu.route.planner.dao.WayEdgeRepository;
@@ -10,10 +11,7 @@ import edu.route.planner.utils.Osrm;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toSet;
@@ -63,19 +61,20 @@ public class WayEdgeServiceImpl implements WayEdgeService {
     public Collection<WayEdge> findOptimal(Long sourceCityNodeId, Long destinationCityNodeId,
                                            Double distanceBuffer, Double durationBuffer) {
         WayEdge directWay = findDirect(sourceCityNodeId, destinationCityNodeId);
-        Collection<CityNode> cities = cityNodeRepository.findAllWithinBuffer(directWay.getGeometry(), distanceBuffer);
-        Collection<CityNode> optionalCities = cities.stream()
-                .filter(cn -> !cn.getId().equals(sourceCityNodeId) && !cn.getId().equals(destinationCityNodeId))
-                .collect(toSet());
 
+        Collection<CityNode> cities = cityNodeRepository.findAllWithinBuffer(directWay.getGeometry(), distanceBuffer);
         Collection<Long> cityIds = cities.stream()
                 .map(CityNode::getId)
                 .collect(toSet());
         Collection<WayEdge> optionalWays = new HashSet<>();
-        for (ProximityEdge proximityEdge : proximityEdgeRepository.findByCityIds(cityIds)) {
-            optionalWays.add(findDirect(proximityEdge.getCityAId(), proximityEdge.getCityBId()));
-            optionalWays.add(findDirect(proximityEdge.getCityBId(), proximityEdge.getCityAId()));
+        if (!cityIds.isEmpty()) {
+            for (ProximityEdge proximityEdge : proximityEdgeRepository.findByCityIds(cityIds)) {
+                optionalWays.add(findDirect(proximityEdge.getCityAId(), proximityEdge.getCityBId()));
+                optionalWays.add(findDirect(proximityEdge.getCityBId(), proximityEdge.getCityAId()));
+            }
         }
+
+        List<Long> run = BruteForce.run(directWay, optionalWays, distanceBuffer, durationBuffer);
 
         return optionalWays;
     }

@@ -87,6 +87,8 @@ public abstract class Osrm {
         ObjectMapper mapper = new ObjectMapper();
         String string = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(map);
         GeometryJSON g = new GeometryJSON();
-        return g.read(string);
+        Geometry geometry = g.read(string);
+        geometry.setSRID(4326);
+        return geometry;
     }
 }
