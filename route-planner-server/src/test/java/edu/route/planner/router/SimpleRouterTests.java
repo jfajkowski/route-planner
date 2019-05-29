@@ -1,23 +1,35 @@
 package edu.route.planner.router;
 
+import edu.route.planner.dao.CityNodeRepository;
 import edu.route.planner.model.CityNode;
+import edu.route.planner.model.WayEdge;
+import edu.route.planner.service.WayEdgeService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.locationtech.jts.util.Assert;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
+import static edu.route.planner.algorithms.BruteForce.toCityIdList;
+import static java.util.stream.Collectors.toSet;
+import static java.util.stream.StreamSupport.stream;
 import static org.junit.runners.Parameterized.Parameters;
 
 @RunWith(Parameterized.class)
 @SpringBootTest
 public class SimpleRouterTests extends RouterTestsContextProvider {
+
+    @Autowired
+    private CityNodeRepository cityNodeRepository;
+
+    @Autowired
+    private WayEdgeService wayEdgeService;
 
     private String startCityName;
     private String destCityName;
@@ -56,8 +68,13 @@ public class SimpleRouterTests extends RouterTestsContextProvider {
     public void should_travel_to_maximum_cities_if_possible(){
         Set<CityNode> expectedCitiesToVisit = getCitiesNodesByNames(citiesToVisitNames);
 
-        List<CityNode> algorithmCitiesToVisit = null; //TODO: ODPALENIE ALGORYTMU Z PIERWSZYMI CZTEREMA PARAMETRAMI START, DEST CITY i oba additionale
-        Set<CityNode> actualCitiesToVisit = algorithmCitiesToVisit.stream().distinct().collect(Collectors.toSet());
+        Long startCityId = cityNodeRepository.findByCityName(startCityName).getId();
+        Long destCityId = cityNodeRepository.findByCityName(destCityName).getId();
+
+        Collection<WayEdge> optimal = wayEdgeService.findOptimal(startCityId, destCityId, (double) additionalKms, (double) additionalTime);
+
+        Set<CityNode> algorithmCitiesToVisit = stream(cityNodeRepository.findAllById(toCityIdList(optimal)).spliterator(), false).collect(toSet()); //TODO: ODPALENIE ALGORYTMU Z PIERWSZYMI CZTEREMA PARAMETRAMI START, DEST CITY i oba additionale
+        Set<CityNode> actualCitiesToVisit = algorithmCitiesToVisit.stream().distinct().collect(toSet());
 
         Assert.equals(actualCitiesToVisit.size(), expectedCitiesToVisit.size());
         Assert.equals(actualCitiesToVisit, expectedCitiesToVisit);

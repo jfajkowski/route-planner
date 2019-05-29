@@ -43,6 +43,7 @@ public class BruteForceTest {
                         {fullyConnected(5), 1.0, 1.0, 1},
                         {fullyConnected(5), 2.0, 2.0, 2},
                         {fullyConnected(5), 3.0, 3.0, 3},
+                        {fullyConnected(10), 10.0, 10.0, 8},
                 }
         );
     }

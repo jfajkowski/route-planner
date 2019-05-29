@@ -11,7 +11,10 @@ import edu.route.planner.utils.Osrm;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toSet;
@@ -74,9 +77,7 @@ public class WayEdgeServiceImpl implements WayEdgeService {
             }
         }
 
-        List<Long> run = BruteForce.run(directWay, optionalWays, distanceBuffer, durationBuffer);
-
-        return optionalWays;
+        return BruteForce.run(directWay, optionalWays, distanceBuffer, durationBuffer);
     }
 
     @Override

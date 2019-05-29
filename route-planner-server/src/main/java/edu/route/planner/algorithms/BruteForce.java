@@ -1,6 +1,8 @@
 package edu.route.planner.algorithms;
 
 import edu.route.planner.model.WayEdge;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.function.ToDoubleFunction;
@@ -11,7 +13,9 @@ import static java.util.stream.Collectors.toList;
 
 public abstract class BruteForce {
 
-    public static List<Long> run(WayEdge directWayEdge, Collection<WayEdge> alternativeWayEdges,
+    private static final Logger logger = LoggerFactory.getLogger(BruteForce.class);
+
+    public static List<WayEdge> run(WayEdge directWayEdge, Collection<WayEdge> alternativeWayEdges,
                                  double distanceBuffer, double durationBuffer) {
 
         List<WayEdge> result = singletonList(directWayEdge);
@@ -29,10 +33,7 @@ public abstract class BruteForce {
                     maxEdges, maxDistance, maxDuration,
                     new ArrayList<>(), result);
         }
-        return result.stream()
-                .skip(1)
-                .map(WayEdge::getSourceCityNodeId)
-                .collect(toList());
+        return result;
     }
 
     private static long calculateMaxEdges(WayEdge directWayEdge, Collection<WayEdge> alternativeWayEdges) {
@@ -57,10 +58,11 @@ public abstract class BruteForce {
                 if (isFinal(currentResult, destinationNode)) {
                     if (isBetter(currentResult, bestResult)) {
                         bestResult = new ArrayList<>(currentResult);
+                        logger.debug("New best result: {}", toString(bestResult));
                     }
                 } else {
                     long nextNode = nextEdge.getDestinationCityNodeId();
-                    bestResult = depthFirstSearch(sourceNodeToOutEdges, destinationNode, nextNode,
+                    bestResult = depthFirstSearch(sourceNodeToOutEdges, nextNode, destinationNode,
                             maxEdges, maxDistance, maxDuration,
                             currentResult, bestResult);
                 }
@@ -73,7 +75,8 @@ public abstract class BruteForce {
     private static boolean isAcceptable(List<WayEdge> currentResult, long maxEdges, double maxDistance, double maxDuration) {
         return currentResult.size() <= maxEdges
                 && summary(currentResult, WayEdge::getDistance) <= maxDistance
-                && summary(currentResult, WayEdge::getDuration) <= maxDuration;
+                && summary(currentResult, WayEdge::getDuration) <= maxDuration
+                && toCityIdList(currentResult).size() == new HashSet<>(toCityIdList(currentResult)).size();
     }
 
     private static boolean isFinal(List<WayEdge> currentResult, long destinationNode) {
@@ -88,5 +91,17 @@ public abstract class BruteForce {
 
     private static double summary(List<WayEdge> edges, ToDoubleFunction<WayEdge> mapping) {
         return edges.stream().mapToDouble(mapping).sum();
+    }
+
+    public static List<Long> toCityIdList(Collection<WayEdge> edges) {
+        return edges.stream()
+                .skip(1)
+                .map(WayEdge::getSourceCityNodeId)
+                .collect(toList());
+    }
+
+    private static String toString(List<WayEdge> edges) {
+        return String.format("size %s, distance %s, duration %s, nodes %s", edges.size(),
+                summary(edges, WayEdge::getDistance), summary(edges, WayEdge::getDuration), toCityIdList(edges));
     }
 }
