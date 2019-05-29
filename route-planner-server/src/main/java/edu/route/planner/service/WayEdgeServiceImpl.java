@@ -11,12 +11,8 @@ import edu.route.planner.utils.Osrm;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 
-import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toSet;
 
 @Service
@@ -36,9 +32,7 @@ public class WayEdgeServiceImpl implements WayEdgeService {
     public void recalculateCache() {
         wayEdgeRepository.deleteAll();
         for (ProximityEdge pe : proximityEdgeRepository.findAll()) {
-            WayEdge aToBWay = findDirect(pe.getCityAId(), pe.getCityBId(), false);
-            WayEdge bToAWay = findDirect(pe.getCityBId(), pe.getCityAId(), false);
-            wayEdgeRepository.saveAll(asList(aToBWay, bToAWay));
+            wayEdgeRepository.save(findDirect(pe.getCityAId(), pe.getCityBId(), false));
         }
     }
 
@@ -61,8 +55,8 @@ public class WayEdgeServiceImpl implements WayEdgeService {
     }
 
     @Override
-    public Collection<WayEdge> findOptimal(Long sourceCityNodeId, Long destinationCityNodeId,
-                                           Double distanceBuffer, Double durationBuffer) {
+    public List<WayEdge> findOptimal(Long sourceCityNodeId, Long destinationCityNodeId,
+                                     Double distanceBuffer, Double durationBuffer) {
         WayEdge directWay = findDirect(sourceCityNodeId, destinationCityNodeId, false);
 
         Collection<CityNode> cities = cityNodeRepository.findAllWithinBuffer(directWay.getGeometry(), distanceBuffer);
@@ -73,7 +67,6 @@ public class WayEdgeServiceImpl implements WayEdgeService {
         if (!cityIds.isEmpty()) {
             for (ProximityEdge proximityEdge : proximityEdgeRepository.findByCityIds(cityIds)) {
                 optionalWays.add(findDirect(proximityEdge.getCityAId(), proximityEdge.getCityBId(), false));
-                optionalWays.add(findDirect(proximityEdge.getCityBId(), proximityEdge.getCityAId(), false));
             }
         }
 

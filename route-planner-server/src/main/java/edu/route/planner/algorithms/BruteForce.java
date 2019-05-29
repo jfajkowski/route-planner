@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 import java.util.function.ToDoubleFunction;
 
+import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
@@ -58,7 +59,7 @@ public abstract class BruteForce {
                 if (isFinal(currentResult, destinationNode)) {
                     if (isBetter(currentResult, bestResult)) {
                         bestResult = new ArrayList<>(currentResult);
-                        logger.debug("New best result: {}", toString(bestResult));
+                        logger.info("New best result: {}", toString(bestResult));
                     }
                 } else {
                     long nextNode = nextEdge.getDestinationCityNodeId();
@@ -76,7 +77,7 @@ public abstract class BruteForce {
         return currentResult.size() <= maxEdges
                 && summary(currentResult, WayEdge::getDistance) <= maxDistance
                 && summary(currentResult, WayEdge::getDuration) <= maxDuration
-                && toCityIdList(currentResult).size() == new HashSet<>(toCityIdList(currentResult)).size();
+                && toOptionalCityIds(currentResult).size() == new HashSet<>(toOptionalCityIds(currentResult)).size();
     }
 
     private static boolean isFinal(List<WayEdge> currentResult, long destinationNode) {
@@ -85,23 +86,31 @@ public abstract class BruteForce {
 
     private static boolean isBetter(List<WayEdge> currentResult, List<WayEdge> bestResult) {
         return currentResult.size() > bestResult.size() || (currentResult.size() == bestResult.size()
-                && summary(currentResult, WayEdge::getDistance) > summary(bestResult, WayEdge::getDistance)
-                && summary(currentResult, WayEdge::getDuration) > summary(bestResult, WayEdge::getDuration));
+                && summary(currentResult, WayEdge::getDistance) < summary(bestResult, WayEdge::getDistance)
+                && summary(currentResult, WayEdge::getDuration) < summary(bestResult, WayEdge::getDuration));
     }
 
     private static double summary(List<WayEdge> edges, ToDoubleFunction<WayEdge> mapping) {
         return edges.stream().mapToDouble(mapping).sum();
     }
 
-    public static List<Long> toCityIdList(Collection<WayEdge> edges) {
-        return edges.stream()
-                .skip(1)
-                .map(WayEdge::getSourceCityNodeId)
-                .collect(toList());
+    public static List<Long> toAllCityIds(List<WayEdge> edges) {
+        List<Long> cityIds = new ArrayList<>(edges.size() + 1);
+        cityIds.add(0, edges.get(0).getSourceCityNodeId());
+        cityIds.addAll(edges.stream().map(WayEdge::getDestinationCityNodeId).collect(toList()));
+        return cityIds;
+    }
+
+    public static List<Long> toOptionalCityIds(List<WayEdge> edges) {
+        if (edges.size() <= 1) {
+            return emptyList();
+        }
+        List<Long> cityIds = toAllCityIds(edges);
+        return cityIds.subList(1, cityIds.size() - 2);
     }
 
     private static String toString(List<WayEdge> edges) {
         return String.format("size %s, distance %s, duration %s, nodes %s", edges.size(),
-                summary(edges, WayEdge::getDistance), summary(edges, WayEdge::getDuration), toCityIdList(edges));
+                summary(edges, WayEdge::getDistance), summary(edges, WayEdge::getDuration), toAllCityIds(edges));
     }
 }

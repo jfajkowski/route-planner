@@ -11,6 +11,6 @@ import java.util.Collection;
 @Repository
 public interface ProximityEdgeRepository extends CrudRepository<ProximityEdge, Long> {
 
-    @Query("from ProximityEdge where cityAId in (:cityIds) or cityBId in (:cityIds)")
+    @Query("from ProximityEdge where cityAId in (:cityIds) and cityBId in (:cityIds)")
     Collection<ProximityEdge> findByCityIds(@Param("cityIds") Collection<Long> cityIds);
 }

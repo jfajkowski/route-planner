@@ -1,6 +1,12 @@
 -- wersja 66 miast
-create table city_nodes(id,name,geom) as 
-(select id, tags->'name', geom from nodes where tags->'place' = 'city');
+-- create table city_nodes(id,name,geom) as
+-- (select id, tags->'name', geom from nodes where tags->'place' = 'city');
+
+
+create table city_nodes(id, name, geom) as
+    (select id, tags -> 'name', geom
+     from nodes
+     where tags -> 'place' IN ('city', 'town'));
 
 -- wersja 940 miast
 -- create table city_names(name text);
