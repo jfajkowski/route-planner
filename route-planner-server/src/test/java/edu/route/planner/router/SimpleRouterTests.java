@@ -16,7 +16,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import static edu.route.planner.algorithms.BruteForce.toCityIdList;
+import static edu.route.planner.algorithms.BruteForce.toAllCityIds;
 import static java.util.stream.Collectors.toSet;
 import static java.util.stream.StreamSupport.stream;
 import static org.junit.runners.Parameterized.Parameters;
@@ -71,9 +71,9 @@ public class SimpleRouterTests extends RouterTestsContextProvider {
         Long startCityId = cityNodeRepository.findByCityName(startCityName).getId();
         Long destCityId = cityNodeRepository.findByCityName(destCityName).getId();
 
-        Collection<WayEdge> optimal = wayEdgeService.findOptimal(startCityId, destCityId, (double) additionalKms, (double) additionalTime);
+        List<WayEdge> optimal = wayEdgeService.findOptimal(startCityId, destCityId, (double) additionalKms, (double) additionalTime);
 
-        Set<CityNode> algorithmCitiesToVisit = stream(cityNodeRepository.findAllById(toCityIdList(optimal)).spliterator(), false).collect(toSet()); //TODO: ODPALENIE ALGORYTMU Z PIERWSZYMI CZTEREMA PARAMETRAMI START, DEST CITY i oba additionale
+        Set<CityNode> algorithmCitiesToVisit = stream(cityNodeRepository.findAllById(toAllCityIds(optimal)).spliterator(), false).collect(toSet()); //TODO: ODPALENIE ALGORYTMU Z PIERWSZYMI CZTEREMA PARAMETRAMI START, DEST CITY i oba additionale
         Set<CityNode> actualCitiesToVisit = algorithmCitiesToVisit.stream().distinct().collect(toSet());
 
         Assert.equals(actualCitiesToVisit.size(), expectedCitiesToVisit.size());
