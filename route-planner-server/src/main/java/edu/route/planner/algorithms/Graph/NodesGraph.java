@@ -6,23 +6,12 @@ import java.util.List;
 import java.util.Map;
 
 public class NodesGraph {
-    private Map<String, Edge> edges;
-    private Map<String, Vertex> vertices;
-
-    public void addEdge(Vertex start, Vertex destination, Edge edge){
-        if(start.getId().equals(edge.getDestinationId())) throw new IllegalArgumentException("Edge cannot start and end up in the same vertex.");
-        if(edges.containsKey(edge.getId())) return;
-
-        edges.put(edge.getId(),edge);
-        start.addEdge(edge);
-        vertices.putIfAbsent(destination.getId(), destination);
-        vertices.putIfAbsent(start.getId(), start);
-    }
+    private Map<Long, Edge> edges;
+    private Map<Long, Vertex> vertices;
 
     public void addEdge(Edge edge){
-        if(edge.getStartId().equals("") || edge.getDestinationId().equals("")) throw new IllegalArgumentException("Edges must have start and end vertex ID.");
-
-        edges.put(edge.getId(), edge);
+        if(!edges.containsKey(edge.getId()))
+            edges.put(edge.getId(), edge);
     }
 
     public void removeEdge(Edge edge){
@@ -36,53 +25,40 @@ public class NodesGraph {
         }
     }
 
-    public Edge getEdge(String Id){
-        return edges.get(Id);
-    }
-
-    public Vertex getVertex(String Id){
+    public Vertex getVertex(Long Id){
         return vertices.get(Id);
     }
 
-    public void removeVertex(String vertexId){
+    public void removeVertex(Long vertexId){
         if(!vertices.containsKey(vertexId)) return;
 
         removeConnectionsWithVertex(vertexId);
         vertices.remove(vertexId);
     }
 
-    public Map<String, Edge> getEdges() {
-        return edges;
-    }
-
-    public void setEdges(Map<String, Edge> edges) {
-        this.edges = edges;
-    }
-
-    public Map<String, Vertex> getVertices() {
+    public Map<Long, Vertex> getVertices() {
         return vertices;
     }
 
-    public void setVertices(Map<String, Vertex> vertices) {
-        this.vertices = vertices;
-    }
-
     public void addVertex(Vertex v){
-        this.vertices.put(v.getId(), v);
+        if(!vertices.containsKey(v.getId()))
+            this.vertices.put(v.getId(), v);
     }
 
     public NodesGraph() {
-        edges = new HashMap<>();
-        vertices = new HashMap<>();
+        edges = new HashMap<Long, Edge>();
+        vertices = new HashMap<Long, Vertex>();
     }
 
     public NodesGraph(NodesGraph graph){
         this();
         edges.putAll(graph.edges);
-        vertices.putAll(graph.vertices);
+        Map<Long, Vertex> newVertices = new HashMap<>();
+        graph.vertices.forEach(newVertices::put);
+        vertices.putAll(newVertices);
     }
 
-    private void removeConnectionsWithVertex(String vertexId){
+    private void removeConnectionsWithVertex(Long vertexId){
         List<Edge> edgesToRemove = new ArrayList<>();
         for(Edge edge: edges.values()){
             if(edge.getStartId().equals(vertexId) || edge.getDestinationId().equals(vertexId)) {

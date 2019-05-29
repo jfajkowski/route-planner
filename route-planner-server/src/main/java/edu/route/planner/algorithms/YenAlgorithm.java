@@ -7,24 +7,26 @@ import edu.route.planner.algorithms.Graph.Vertex;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.PriorityQueue;
 
-public class YenAlgorithm {
+class YenAlgorithm {
     private Vertex start;
     private Vertex finish;
     private NodesGraph graph;
     private List<List<Edge>> kShortestPaths = new ArrayList<>();
-    private int K;
+    private Double maxDistance;
+    private Double maxDuration;
+    private final int K = 40;
 
-    public YenAlgorithm(int shortestPathsCount, Vertex start, Vertex finish, NodesGraph graph){
+    YenAlgorithm(Double maxDistance, Double maxDuration, Vertex start, Vertex finish, NodesGraph graph){
         this.start = start;
         this.finish = finish;
         this.graph = graph;
-        this.K = shortestPathsCount;
+        this.maxDistance = maxDistance;
+        this.maxDuration = maxDuration;
     }
 
-    public List<List<Edge>> calculate(){
+    List<List<Edge>> calculate(){
         Vertex spurVertex;
         List<Edge> rootPath;
         PriorityQueue<Path> candidates = new PriorityQueue<>();
@@ -45,11 +47,12 @@ public class YenAlgorithm {
 
                 for(List<Edge> path: kShortestPaths){
 
-                    List<Edge> stubPath = getPathToVertex(path, path.get(0).getStartId(), spurVertex.getId());
+                    List<Edge> stubPath;
+                    if(path.size() <= i) stubPath = path;
+                    else stubPath = getPathToVertex(path, path.get(0).getStartId(), path.get(i).getStartId());
 
                     if(stubPath.equals(rootPath)){
                         Edge re = path.get(i);
-
                         tempGraph.removeEdge(re);
                     }
                 }
@@ -92,12 +95,15 @@ public class YenAlgorithm {
 
             if(shortestPath == null) break;
 
+            if(Path.calculatePathDistance(shortestPath) > maxDistance || Path.calculatePathDuration(shortestPath) > maxDuration)
+                break;
+
             kShortestPaths.add(shortestPath);
         }
         return kShortestPaths;
     }
 
-    private List<Edge> getPathToVertex(List<Edge> path, String startId, String endId){
+    private List<Edge> getPathToVertex(List<Edge> path, Long startId, Long endId){
         List<Edge> result = new ArrayList<>();
         if(startId.equals(endId)){
             return result;
@@ -113,5 +119,4 @@ public class YenAlgorithm {
         }
         throw new IllegalArgumentException("Provided vertex is not in path.");
     }
-
 }

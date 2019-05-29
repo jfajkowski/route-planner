@@ -1,5 +1,6 @@
 package edu.route.planner.algorithms.Graph;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Path implements Comparable<Path> {
@@ -23,11 +24,37 @@ public class Path implements Comparable<Path> {
         return -1;
     }
 
-    public Double getCost(){
+    private Double getCost(){
         double cost = 0.0;
         for(Edge e: edges){
             cost += e.getDistance();
         }
         return cost;
+    }
+
+    public static Double calculatePathDistance(List<Edge> edges){
+        Double result = 0.0;
+        for (Edge e: edges)
+            result += e.getDistance();
+
+        return result;
+    }
+
+    public static Double calculatePathDuration(List<Edge> edges){
+        Double result = 0.0;
+        for (Edge e: edges)
+            result += e.getDuration();
+
+        return result;
+    }
+
+    public static List<Long> getVertices(List<Edge> edges){
+        List<Long> result = new ArrayList<>();
+        for(Edge e: edges){
+            result.add(e.getStartId());
+        }
+        result.add(edges.get(edges.size() - 1).getDestinationId());
+
+        return result;
     }
 }

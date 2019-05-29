@@ -3,38 +3,24 @@ package edu.route.planner.algorithms.Graph;
 import java.util.*;
 
 public class Vertex {
-    private String Id;
+    private Long Id;
     private Double heuristic;
-    private Map<String, Edge> edges;
-    private Double distanceFromStart;
+    private Map<Long, Edge> edges;
 
-    public String getId() {
+    public Long getId() {
         return Id;
-    }
-
-    public void setId(UUID id) {
-        Id = id.toString();
     }
 
     public Double getHeuristic() {
         return heuristic;
     }
 
-    public void setHeuristic(Double heuristic) {
-        this.heuristic = heuristic;
-    }
-
-    public Map<String, Edge> getEdges() {
+    public Map<Long, Edge> getEdges() {
         return edges;
     }
 
     public void addEdge(Edge edge) {
         this.edges.put(edge.getId(), edge);
-    }
-
-    public void addEdge(String startId, String destinationId, Double distance) {
-        UUID id = UUID.randomUUID();
-        this.edges.put(id.toString(), new Edge(id, startId, destinationId, distance));
     }
 
     public Edge getEdge(Vertex vertex){
@@ -46,22 +32,14 @@ public class Vertex {
         return null;
     }
 
-    public void removeEdge(String edgeId){
+    public void removeEdge(Long edgeId){
         edges.remove(edgeId);
     }
 
-    public Double getDistanceFromStart() {
-        return distanceFromStart;
-    }
-
-    public void setDistanceFromStart(Double distanceFromStart) {
-        this.distanceFromStart = distanceFromStart;
-    }
-
-    public Vertex(String Id, Double heuristic) {
+    public Vertex(Long Id, Double heuristic) {
         this.Id = Id;
         this.heuristic = heuristic;
-        edges = new HashMap<>();
+        edges = new HashMap<Long, Edge>();
     }
 
     public Vertex(Vertex vertex){

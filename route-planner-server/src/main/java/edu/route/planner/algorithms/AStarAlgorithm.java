@@ -15,31 +15,27 @@ class AStarAlgorithm {
     private Map<Vertex, Double> distanceFromStart = new HashMap<Vertex, Double>();
     private Map<Vertex, Double> distanceThroughY = new HashMap<Vertex, Double>();
 
-    private final Comparator<Vertex> comparator = new Comparator<Vertex>() {
-        @Override
-        public int compare(Vertex o1, Vertex o2) {
-            if(distanceThroughY.get(o1) < distanceThroughY.get(o2))
-                return -1;
-            if(distanceThroughY.get(o1) > distanceThroughY.get(o2))
-                return 1;
-            return 0;
-        }
+    private final Comparator<Vertex> comparator = (o1, o2) -> {
+        if (distanceThroughY.get(o1) < distanceThroughY.get(o2))
+            return -1;
+        if (distanceThroughY.get(o1) > distanceThroughY.get(o2))
+            return 1;
+        return 0;
     };
 
-    public AStarAlgorithm(Vertex start, Vertex destination, NodesGraph nodesGraph){
+    AStarAlgorithm(Vertex start, Vertex destination, NodesGraph nodesGraph){
         this.start = start;
         this.destination = destination;
         this.graph = nodesGraph;
     }
 
-    public List<Edge> calculate(){
+    List<Edge> calculate(){
 
         for(Vertex v: graph.getVertices().values()){
             distanceThroughY.put(v, Double.MAX_VALUE);
         }
         distanceThroughY.remove(start);
         distanceThroughY.put(start, start.getHeuristic());
-        start.setDistanceFromStart(0.0);
         openVertices.add(start);
         distanceFromStart.put(start, 0.0);
 
