@@ -9,10 +9,12 @@ import edu.route.planner.dao.WayEdgeRepository;
 import edu.route.planner.model.CityNode;
 import edu.route.planner.model.WayEdge;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Service
 public class RouterServiceImpl implements RouterService{
     @Autowired
     private CityNodeRepository cityNodeRepository;
