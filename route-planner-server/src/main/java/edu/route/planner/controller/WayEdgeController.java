@@ -40,8 +40,8 @@ public class WayEdgeController {
         return wayEdgeService.findOptimal(sourceCityNodeId, destinationCityNodeId, distanceBuffer, durationBuffer);
     }
 
-    @GetMapping("wayEdges/optimal/nodes")
-    public Iterable<Long> findOptimalNodesPath(
+    @GetMapping("wayEdges/optimal/router")
+    public Iterable<WayEdge> findOptimalByRouter(
             @RequestParam("source") Long sourceCityNodeId,
             @RequestParam("destination") Long destinationCityNodeId,
             @RequestParam("distanceBuffer") Double distanceBuffer,

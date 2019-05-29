@@ -4,6 +4,7 @@ import edu.route.planner.algorithms.Graph.Edge;
 import edu.route.planner.algorithms.Graph.NodesGraph;
 import edu.route.planner.algorithms.Graph.Path;
 import edu.route.planner.algorithms.Graph.Vertex;
+import edu.route.planner.model.WayEdge;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -26,7 +27,7 @@ public class RouterAlgorithm {
         this.maxDuration = maxDuration;
     }
 
-    public List<Long> calculateRoute(){
+    public List<WayEdge> calculateRoute(){
         Vertex newSource = new Vertex(reversedGraph.getVertex(destination.getId()));
         Vertex newDestination = new Vertex(reversedGraph.getVertex(source.getId()));
 
@@ -60,10 +61,10 @@ public class RouterAlgorithm {
         }
 
 
-        if (longestPathDistance > lastingPathDistance && longestPathDuration > lastingPathDuration) return Path.getVertices(longest);
-        if (lastingPathDistance > longestPathDistance && lastingPathDuration > longestPathDuration) return Path.getVertices(lasting);
+        if (longestPathDistance > lastingPathDistance && longestPathDuration > lastingPathDuration) return longest;
+        if (lastingPathDistance > longestPathDistance && lastingPathDuration > longestPathDuration) return lasting;
 
         //if it cannot be simply settled which route is better, the longest one is returned.
-        return Path.getVertices(longest);
+        return longest;
     }
 }

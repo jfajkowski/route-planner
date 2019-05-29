@@ -1,7 +1,7 @@
 import {GeoJsonObject} from 'geojson';
 
 export class CityNode {
-  id: bigint;
+  id: number;
   cityName: string;
   geom: GeoJsonObject;
 }

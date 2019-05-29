@@ -9,38 +9,33 @@
     <div class="w3-quarter">
       <div class="w3-container w3-blue w3-padding-16">
         <label>
-          <input (ngModelChange)="onLatChange($event)" [ngModel]="center.lat" title="latitude" type="number">
+          <input (ngModelChange)="onDistanceChange($event)" [ngModel]="distanceBuffer" title="distance" type="number">
         </label>
-        <h4>Latitude</h4>
+        <h4>Distance Buffer (km)</h4>
       </div>
     </div>
     <div class="w3-quarter">
       <div class="w3-container w3-blue w3-padding-16">
         <label>
-          <input (ngModelChange)="onLngChange($event)" [ngModel]="center.lng" title="longitude" type="number">
+          <input (ngModelChange)="onDurationChange($event)" [ngModel]="durationBuffer" title="duration" type="number">
         </label>
-        <h4>Longitude</h4>
+        <h4>Duration Buffer (h)</h4>
       </div>
     </div>
-    <div class="w3-quarter">
-      <div class="w3-container w3-blue w3-padding-16">
-        <label>
-          <input [(ngModel)]="zoom" title="zoom" type="number">
-        </label>
-        <h4>Zoom</h4>
-      </div>
-    </div>
+    <!--<div class="w3-quarter">-->
+    <!--<div class="w3-container w3-blue w3-padding-16">-->
+    <!--<label>-->
+    <!--<input [(ngModel)]="zoom" title="zoom" type="number">-->
+    <!--</label>-->
+    <!--<h4>Zoom</h4>-->
+    <!--</div>-->
+    <!--</div>-->
     <div class="w3-quarter">
 
     </div>
   </div>
 
   <div class="w3-row-padding w3-margin-bottom">
-    <div class="w3-quarter">
-      <div class="w3-container w3-blue w3-padding-16">
-        <button>Print all routes</button>
-      </div>
-    </div>
     <div class="w3-quarter">
       <div class="w3-container w3-blue w3-padding-16">
         <label>
@@ -59,9 +54,13 @@
         <h4>Destination City</h4>
       </div>
     </div>
-    <div class="w3-quarter">
 
+    <div class="w3-quarter">
+      <div class="w3-container w3-blue w3-padding-16">
+        <button (click)="getRouteByRouter">Find route</button>
+      </div>
     </div>
+
   </div>
 
   <div class="w3-panel">
@@ -76,7 +75,8 @@
                [leafletOptions]="options"
                [(leafletCenter)]="center"
                (leafletMapReady)="onMapReady($event)"
-               [(leafletZoom)]="zoom">
+               [(leafletZoom)]="zoom"
+               [leafletLayersControl]="layersControl">
           </div>
         </div>
       </div>

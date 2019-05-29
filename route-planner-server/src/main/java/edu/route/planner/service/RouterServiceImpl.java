@@ -32,7 +32,7 @@ public class RouterServiceImpl implements RouterService{
     }
 
     @Override
-    public List<Long> findOptimalNodesPath(Long sourceId, Long destinationId, Double distance, Double duration) {
+    public List<WayEdge> findOptimalNodesPath(Long sourceId, Long destinationId, Double distance, Double duration) {
         List<CityNode> cityNodes = new ArrayList<>();
         cityNodeRepository.findAll().forEach(cityNodes::add);
 
