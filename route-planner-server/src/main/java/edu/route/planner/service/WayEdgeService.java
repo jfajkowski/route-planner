@@ -7,7 +7,7 @@ import java.util.Collection;
 public interface WayEdgeService {
     void recalculateCache();
 
-    WayEdge findDirect(Long sourceCityNodeId, Long destinationCityNodeId);
+    WayEdge findDirect(Long sourceCityNodeId, Long destinationCityNodeId, boolean forceReload);
 
     Collection<WayEdge> findOptimal(Long sourceCityNodeId, Long destinationCityNodeId,
                                     Double distanceBuffer, Double durationBuffer);

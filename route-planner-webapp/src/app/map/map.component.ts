@@ -1,10 +1,10 @@
 import {Component, OnInit} from '@angular/core';
 import * as L from 'leaflet';
 import {LatLng, LayerGroup, Map, tileLayer} from 'leaflet';
-import {CityNodeService} from './city-node.service';
-import {CityNode} from './city-node';
-import {WayEdgeService} from "./way-edge.service";
-import {WayEdge} from "./way-edge";
+import {CityNodeService} from '../services/city_node_service/city-node.service';
+import {CityNode} from '../services/city_node_service/city-node';
+import {WayEdgeService} from "../services/way_edge_service/way-edge.service";
+import {WayEdge} from "../services/way_edge_service/way-edge";
 
 @Component({
   selector: 'app-map',

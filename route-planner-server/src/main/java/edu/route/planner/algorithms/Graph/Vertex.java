@@ -39,13 +39,14 @@ public class Vertex {
     public Vertex(Long Id, Double heuristic) {
         this.Id = Id;
         this.heuristic = heuristic;
-        edges = new HashMap<Long, Edge>();
+        edges = new HashMap<>();
     }
 
     public Vertex(Vertex vertex){
         this(vertex.Id, vertex.heuristic);
-        this.edges.putAll(vertex.edges);
-    }
+        for(Edge e: vertex.edges.values())
+            this.edges.put(e.getId(), new Edge(e));
+        }
 
     @Override
     public boolean equals(Object obj){

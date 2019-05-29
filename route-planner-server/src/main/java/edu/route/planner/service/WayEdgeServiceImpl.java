@@ -36,17 +36,17 @@ public class WayEdgeServiceImpl implements WayEdgeService {
     public void recalculateCache() {
         wayEdgeRepository.deleteAll();
         for (ProximityEdge pe : proximityEdgeRepository.findAll()) {
-            WayEdge aToBWay = findDirect(pe.getCityAId(), pe.getCityBId());
-            WayEdge bToAWay = findDirect(pe.getCityBId(), pe.getCityAId());
+            WayEdge aToBWay = findDirect(pe.getCityAId(), pe.getCityBId(), false);
+            WayEdge bToAWay = findDirect(pe.getCityBId(), pe.getCityAId(), false);
             wayEdgeRepository.saveAll(asList(aToBWay, bToAWay));
         }
     }
 
     @Override
-    public WayEdge findDirect(Long sourceCityNodeId, Long destinationCityNodeId) {
+    public WayEdge findDirect(Long sourceCityNodeId, Long destinationCityNodeId, boolean forceReload) {
         Optional<WayEdge> result = wayEdgeRepository.findByCityNodeIds(sourceCityNodeId, destinationCityNodeId);
 
-        if (result.isPresent()) {
+        if (result.isPresent() && !forceReload) {
             return result.get();
         }
 
@@ -63,7 +63,7 @@ public class WayEdgeServiceImpl implements WayEdgeService {
     @Override
     public Collection<WayEdge> findOptimal(Long sourceCityNodeId, Long destinationCityNodeId,
                                            Double distanceBuffer, Double durationBuffer) {
-        WayEdge directWay = findDirect(sourceCityNodeId, destinationCityNodeId);
+        WayEdge directWay = findDirect(sourceCityNodeId, destinationCityNodeId, false);
 
         Collection<CityNode> cities = cityNodeRepository.findAllWithinBuffer(directWay.getGeometry(), distanceBuffer);
         Collection<Long> cityIds = cities.stream()
@@ -72,8 +72,8 @@ public class WayEdgeServiceImpl implements WayEdgeService {
         Collection<WayEdge> optionalWays = new HashSet<>();
         if (!cityIds.isEmpty()) {
             for (ProximityEdge proximityEdge : proximityEdgeRepository.findByCityIds(cityIds)) {
-                optionalWays.add(findDirect(proximityEdge.getCityAId(), proximityEdge.getCityBId()));
-                optionalWays.add(findDirect(proximityEdge.getCityBId(), proximityEdge.getCityAId()));
+                optionalWays.add(findDirect(proximityEdge.getCityAId(), proximityEdge.getCityBId(), false));
+                optionalWays.add(findDirect(proximityEdge.getCityBId(), proximityEdge.getCityAId(), false));
             }
         }
 

@@ -13,24 +13,26 @@ public class RouterAlgorithm {
     private Vertex source;
     private Vertex destination;
     private NodesGraph graph;
+    private NodesGraph reversedGraph;
     private Double maxDuration;
     private Double maxDistance;
 
-    public RouterAlgorithm(Vertex source, Vertex destination, NodesGraph graph, Double maxDistance, Double maxDuration){
+    public RouterAlgorithm(Vertex source, Vertex destination, NodesGraph graph, NodesGraph reversedGraph, Double maxDistance, Double maxDuration){
         this.source = source;
         this.destination = destination;
         this.graph = graph;
+        this.reversedGraph = reversedGraph;
         this.maxDistance = maxDistance;
         this.maxDuration = maxDuration;
     }
 
     public List<Long> calculateRoute(){
-        YenAlgorithm yen = new YenAlgorithm(maxDistance, maxDuration, source, destination, graph);
-        List<List<Edge>> paths = yen.calculate();
+        Vertex newSource = new Vertex(reversedGraph.getVertex(destination.getId()));
+        Vertex newDestination = new Vertex(reversedGraph.getVertex(source.getId()));
 
-        Vertex newSource = new Vertex(destination);
-        Vertex newDestination = new Vertex(source);
-        YenAlgorithm reversedYen = new YenAlgorithm(maxDistance, maxDuration, newSource, newDestination, graph);
+        YenAlgorithm yen = new YenAlgorithm(maxDistance, maxDuration, new Vertex(source), new Vertex(destination), graph);
+        List<List<Edge>> paths = yen.calculate();
+        YenAlgorithm reversedYen = new YenAlgorithm(maxDistance, maxDuration, newSource, newDestination, reversedGraph);
         paths.addAll(reversedYen.calculate());
 
         List<Edge> longest = new ArrayList<>();

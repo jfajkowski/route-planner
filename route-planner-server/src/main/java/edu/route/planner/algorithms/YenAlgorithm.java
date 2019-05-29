@@ -34,6 +34,8 @@ class YenAlgorithm {
         NodesGraph tempGraph = new NodesGraph(graph);
 
         List<Edge> shortestPath = aStar.calculate();
+//        if(shortestPath == null) throw new IllegalArgumentException("Cannot find path in provided graph.");
+        if(shortestPath == null) return kShortestPaths;
         kShortestPaths.add(shortestPath);
 
         for(int k = 1; k < K; k++){
@@ -52,7 +54,10 @@ class YenAlgorithm {
                     else stubPath = getPathToVertex(path, path.get(0).getStartId(), path.get(i).getStartId());
 
                     if(stubPath.equals(rootPath)){
-                        Edge re = path.get(i);
+                        Edge re;
+                        if(path.size() <= i) continue;
+                        else re = path.get(i);
+
                         tempGraph.removeEdge(re);
                     }
                 }
@@ -95,7 +100,9 @@ class YenAlgorithm {
 
             if(shortestPath == null) break;
 
-            if(Path.calculatePathDistance(shortestPath) > maxDistance || Path.calculatePathDuration(shortestPath) > maxDuration)
+            Double pathDist = Path.calculatePathDistance(shortestPath);
+            Double pathDur = Path.calculatePathDuration(shortestPath);
+            if( pathDist > maxDistance || pathDur > maxDuration)
                 break;
 
             kShortestPaths.add(shortestPath);

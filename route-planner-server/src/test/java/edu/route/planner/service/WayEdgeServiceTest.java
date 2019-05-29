@@ -18,7 +18,6 @@ public class WayEdgeServiceTest {
     @Autowired
     private WayEdgeRepository wayEdgeRepository;
 
-    @Ignore
     @Test
     public void recalculateCache() {
         wayEdgeService.recalculateCache();

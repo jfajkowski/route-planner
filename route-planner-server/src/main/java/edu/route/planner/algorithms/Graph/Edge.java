@@ -36,6 +36,10 @@ public class Edge {
         this.duration = duration;
     }
 
+    public Edge(Edge edge){
+        this(edge.Id, edge.startId, edge.destinationId, edge.distance, edge.duration);
+    }
+
     @Override
     public boolean equals(Object obj){
         if(this == obj) return true;
