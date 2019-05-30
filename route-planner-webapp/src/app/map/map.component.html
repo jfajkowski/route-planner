@@ -39,7 +39,7 @@
     <div class="w3-quarter">
       <div class="w3-container w3-blue w3-padding-16">
         <label>
-          <input [ngModel]="sourceCity.id" title="sourceId" type="text" disabled>
+          <input [ngModel]="sourceCity?.id" disabled title="sourceId" type="text">
         </label>
 
         <h4>Source City</h4>
@@ -48,7 +48,7 @@
     <div class="w3-quarter">
       <div class="w3-container w3-blue w3-padding-16">
         <label>
-          <input [ngModel]="destinationCity.id" title="destinationId" type="text" disabled>
+          <input [ngModel]="destinationCity?.id" disabled title="destinationId" type="text">
         </label>
 
         <h4>Destination City</h4>
@@ -57,7 +57,7 @@
 
     <div class="w3-quarter">
       <div class="w3-container w3-blue w3-padding-16">
-        <button (click)="getRouteByRouter">Find route</button>
+        <button (click)=getRouteByRouter()>Find route</button>
       </div>
     </div>
 
@@ -75,8 +75,7 @@
                [leafletOptions]="options"
                [(leafletCenter)]="center"
                (leafletMapReady)="onMapReady($event)"
-               [(leafletZoom)]="zoom"
-               [leafletLayersControl]="layersControl">
+               [(leafletZoom)]="zoom">
           </div>
         </div>
       </div>

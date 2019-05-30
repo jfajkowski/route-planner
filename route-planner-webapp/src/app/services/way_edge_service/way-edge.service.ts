@@ -12,7 +12,9 @@ export class WayEdgeService {
   }
 
   findDirectWayEdge(source: number, destination: number): Observable<WayEdge> {
-    let params = new HttpParams().set("source", source.toString()).set("destination", destination.toString());
+    let params = new HttpParams()
+      .set("source", source.toString())
+      .set("destination", destination.toString());
     return this.http.get<WayEdge>('/api/wayEdges/direct', { params: params });
   }
 
@@ -22,7 +24,7 @@ export class WayEdgeService {
       .set("destination", destination.toString())
       .set("distanceBuffer", distanceBuffer.toString())
       .set("durationBuffer", durationBuffer.toString());
-    return this.http.get<WayEdge[]>('/api/wayEdges/optimal/router', { params: params });
+    return this.http.get<WayEdge[]>('/api/wayEdges/optimal/router', {params: params});
   }
 
   findAll(): Observable<WayEdge[]> {
