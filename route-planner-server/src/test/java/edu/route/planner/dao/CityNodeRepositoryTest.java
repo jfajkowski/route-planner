@@ -70,6 +70,10 @@ public class CityNodeRepositoryTest {
                 .map(CityNode::getCityName)
                 .collect(toSet());
 
-        assertThat(actualCitiesWithinBuffer).containsAll(expectedCitiesWithinBuffer);
+        if (expectedCitiesWithinBuffer.isEmpty()) {
+            assertThat(actualCitiesWithinBuffer).isEmpty();
+        } else {
+            assertThat(actualCitiesWithinBuffer).containsAll(expectedCitiesWithinBuffer);
+        }
     }
 }

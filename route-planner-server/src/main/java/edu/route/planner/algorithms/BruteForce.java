@@ -96,6 +96,9 @@ public abstract class BruteForce {
     }
 
     public static List<Long> toAllCityIds(List<WayEdge> edges) {
+        if (edges.size() <= 1) {
+            return emptyList();
+        }
         List<Long> cityIds = new ArrayList<>(edges.size() + 1);
         cityIds.add(0, edges.get(0).getSourceCityNodeId());
         cityIds.addAll(edges.stream().map(WayEdge::getDestinationCityNodeId).collect(toList()));
@@ -110,7 +113,7 @@ public abstract class BruteForce {
         return cityIds.subList(1, cityIds.size() - 2);
     }
 
-    private static String toString(List<WayEdge> edges) {
+    public static String toString(List<WayEdge> edges) {
         return String.format("size %s, distance %s, duration %s, nodes %s", edges.size(),
                 summary(edges, WayEdge::getDistance), summary(edges, WayEdge::getDuration), toAllCityIds(edges));
     }

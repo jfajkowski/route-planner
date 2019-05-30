@@ -1,7 +1,6 @@
 package edu.route.planner.service;
 
 import edu.route.planner.algorithms.BruteForce;
-import edu.route.planner.algorithms.Graph.Edge;
 import edu.route.planner.algorithms.Graph.GraphBuilder;
 import edu.route.planner.algorithms.Graph.NodesGraph;
 import edu.route.planner.algorithms.Graph.Vertex;
@@ -70,11 +69,13 @@ public class WayEdgeServiceImpl implements WayEdgeService {
     @Override
     public List<WayEdge> findOptimalBruteForce(Long sourceCityNodeId, Long destinationCityNodeId,
                                                Double distanceBuffer, Double durationBuffer) {
+        double distanceInKmBuffer = distanceBuffer * 1000;
+        double durationInHBuffer = durationBuffer * 60 * 60;
         WayEdge directWay = findDirect(sourceCityNodeId, destinationCityNodeId);
 
-        Collection<WayEdge> optionalWays = findOptionalProximityGraphWayEdges(directWay, distanceBuffer);
+        Collection<WayEdge> optionalWays = findOptionalProximityGraphWayEdges(directWay, distanceInKmBuffer);
 
-        return BruteForce.run(directWay, optionalWays, distanceBuffer, durationBuffer);
+        return BruteForce.run(directWay, optionalWays, distanceInKmBuffer, durationInHBuffer);
     }
 
     @Override
@@ -85,6 +86,8 @@ public class WayEdgeServiceImpl implements WayEdgeService {
         WayEdge directWay = findDirect(sourceCityNodeId, destinationCityNodeId);
         List<WayEdge> wayEdges = findOptionalProximityGraphWayEdges(directWay, distanceInKmBuffer);
         Set<Long> cityNodeIds = new HashSet<>(toAllCityIds(wayEdges));
+        cityNodeIds.add(directWay.getSourceCityNodeId());
+        cityNodeIds.add(directWay.getDestinationCityNodeId());
 
         GraphBuilder gb = new GraphBuilder(this);
         NodesGraph graph = gb.loadEdges(wayEdges, cityNodeIds, destinationCityNodeId);
