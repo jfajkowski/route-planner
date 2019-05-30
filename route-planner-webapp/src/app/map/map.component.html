@@ -2,7 +2,7 @@
 
   <!-- Header -->
   <header class="w3-container" style="padding-top:22px">
-    <h5><b><i class="fa fa-dashboard"></i> My Dashboard</b></h5>
+    <h5><b><i class="fa fa-dashboard"></i> Settings</b></h5>
   </header>
 
   <div class="w3-row-padding w3-margin-bottom">
@@ -70,7 +70,9 @@
            style="width: 100%; height: 100%">
         <div class="w3-row-padding w3-margin-bottom ">
           <div class="w3-quarter">
-            <h5>Map</h5>
+            <h3>Map</h3>
+            <h5 *ngIf="sourceCity.id === null || destinationCity.id === null">Please select start and destination</h5>
+            <h5 *ngIf="currentRoute && currentRoute.distance === 0 && currentRoute.duration === 0">Try adjust buffers...</h5>
           </div>
           <div *ngIf="currentRoute !== null" class="w3-quarter">
             <div class="w3-container w3-blue w3-padding-10 w3-margin-top w3-hover-shadow">

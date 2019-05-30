@@ -80,14 +80,16 @@ export class MapComponent implements OnInit {
   }
 
   getRouteByRouter() {
-    const self = this;
+    if(!this.sourceCity || !this.sourceCity.id) return;
+    if(!this.destinationCity || !this.destinationCity.id) return;
     console.log(this.sourceCity.id, this.destinationCity.id, this.distanceBuffer, this.durationBuffer);
+
+    const self = this;
     let result: Observable<GetRouteResponse> = null;
     let routeColor: string = "red";
 
     if(this.selectedAlgorithm === 0){
       result = this.wayEdgeService.findRouterOptimalPath(this.sourceCity.id, this.destinationCity.id, this.distanceBuffer, this.durationBuffer);
-
     }
     if(this.selectedAlgorithm === 1){
       result = this.wayEdgeService.findBrutForceOptimalPath(this.sourceCity.id, this.destinationCity.id, this.distanceBuffer, this.durationBuffer);

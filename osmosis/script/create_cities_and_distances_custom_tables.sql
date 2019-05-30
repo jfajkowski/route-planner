@@ -1,6 +1,6 @@
 -- wersja 66 miast
--- create table city_nodes(id,name,geom) as
--- (select id, tags->'name', geom from nodes where tags->'place' = 'city');
+create table city_nodes(id,name,geom) as
+(select id, tags->'name', geom from nodes where tags->'place' = 'city');
 
 
 create table city_nodes(id, name, geom) as
@@ -11,7 +11,7 @@ create table city_nodes(id, name, geom) as
 -- wersja 940 miast
 -- create table city_names(name text);
 -- COPY city_names FROM 'sciezka_do_projektu\route-planner\cities\polish_cities.csv' DELIMITER '|';
--- create table city_nodes(id,name,geom) as (select id,tags->'name', geom from nodes where tags->'place' in ('city','town','village') and tags->'name' in (select name from city_names));
+create table city_nodes(id,name,geom) as (select id,tags->'name', geom from nodes where tags->'place' in ('city','town','village') and tags->'name' in (select name from city_names));
 
 alter table city_nodes add constraint PK_CITY_NODES PRIMARY KEY(ID);
 

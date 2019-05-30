@@ -14,16 +14,18 @@ class YenAlgorithm {
     private Vertex finish;
     private NodesGraph graph;
     private List<List<Edge>> kShortestPaths = new ArrayList<>();
-    private Double maxDistance;
-    private Double maxDuration;
+    private Double distanceBuffor;
+    private Double durationBuffor;
+    private Double maxDistance = 0.0;
+    private Double maxDuration = 0.0;
     private final int K = 40;
 
-    YenAlgorithm(Double maxDistance, Double maxDuration, Vertex start, Vertex finish, NodesGraph graph){
+    YenAlgorithm(Double distanceBuffor, Double durationBuffor, Vertex start, Vertex finish, NodesGraph graph){
         this.start = start;
         this.finish = finish;
         this.graph = graph;
-        this.maxDistance = maxDistance;
-        this.maxDuration = maxDuration;
+        this.distanceBuffor = distanceBuffor;
+        this.durationBuffor = durationBuffor;
     }
 
     List<List<Edge>> calculate(){
@@ -34,8 +36,9 @@ class YenAlgorithm {
         NodesGraph tempGraph = new NodesGraph(graph);
 
         List<Edge> shortestPath = aStar.calculate();
-//        if(shortestPath == null) throw new IllegalArgumentException("Cannot find path in provided graph.");
         if(shortestPath == null) return kShortestPaths;
+        maxDuration = Path.calculatePathDuration(shortestPath) + durationBuffor;
+        maxDistance = Path.calculatePathDistance(shortestPath) + distanceBuffor;
         kShortestPaths.add(shortestPath);
 
         for(int k = 1; k < K; k++){
