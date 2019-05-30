@@ -12,6 +12,8 @@ import edu.route.planner.model.CityNode;
 import edu.route.planner.model.ProximityEdge;
 import edu.route.planner.model.WayEdge;
 import edu.route.planner.utils.Osrm;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -22,6 +24,8 @@ import static java.util.stream.Collectors.toSet;
 
 @Service
 public class WayEdgeServiceImpl implements WayEdgeService {
+
+    private static final Logger logger = LoggerFactory.getLogger(WayEdgeService.class);
 
     private final CityNodeRepository cityNodeRepository;
     private final ProximityEdgeRepository proximityEdgeRepository;
@@ -139,6 +143,7 @@ public class WayEdgeServiceImpl implements WayEdgeService {
                 optionalWays.add(findDirect(proximityEdge.getCityAId(), proximityEdge.getCityBId()));
             }
         }
+        logger.info("Found {} way edges", optionalWays.size());
         return optionalWays;
     }
 }
