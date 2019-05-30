@@ -37,6 +37,15 @@ export class WayEdgeService {
     return this.http.get<GetRouteResponse>('/api/wayEdges/optimal', {params: params});
   }
 
+  findAnnealingOptimalPath(source: number, destination: number, distanceBuffer: number, durationBuffer: number): Observable<GetRouteResponse> {
+    let params = new HttpParams()
+      .set("source", source.toString())
+      .set("destination", destination.toString())
+      .set("distanceBuffer", distanceBuffer.toString())
+      .set("durationBuffer", durationBuffer.toString());
+    return this.http.get<GetRouteResponse>('/api/wayEdges/optimal/annealing', {params: params});
+  }
+
   findAll(): Observable<WayEdge[]> {
     return this.http.get<WayEdge[]>('/api/wayEdges/all');
   }

@@ -4,7 +4,6 @@ import {LatLng, LatLngExpression, LayerGroup, Map, Marker, MarkerOptions, tileLa
 import {CityNodeService} from '../services/city_node_service/city-node.service';
 import {CityNode} from '../services/city_node_service/city-node';
 import {WayEdgeService} from "../services/way_edge_service/way-edge.service";
-import {WayEdge} from "../services/way_edge_service/way-edge";
 import {Observable} from "rxjs/index";
 import {GetRouteResponse} from "../contracts/get-route-response";
 
@@ -26,8 +25,8 @@ class CityMarker extends Marker {
 export class MapComponent implements OnInit {
   center = new LatLng(52.219873, 21.012066);
   zoom = 8;
-  distanceBuffer = 10.0;
-  durationBuffer = 1.0;
+  distanceBuffer = 60.0;
+  durationBuffer = 3.0;
   sourceCity: CityNode;
   destinationCity: CityNode;
   map: Map;
@@ -35,7 +34,8 @@ export class MapComponent implements OnInit {
   algorithms = [
     {id: 0, name: "Custom"},
     {id: 1, name: "Brut Force"},
-    {id: 2, name: "Select algorithm"}
+    {id: 2, name: "Annealing"},
+    {id: 3, name: "Select algorithm"}
   ];
 
   currentRoute: GetRouteResponse = null;
@@ -60,7 +60,7 @@ export class MapComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.selectedAlgorithm = 2;
+    this.selectedAlgorithm = 3;
     this.sourceCity = new CityNode();
     this.sourceCity.id = null;
     this.destinationCity = new CityNode();
@@ -94,6 +94,10 @@ export class MapComponent implements OnInit {
     if(this.selectedAlgorithm === 1){
       result = this.wayEdgeService.findBrutForceOptimalPath(this.sourceCity.id, this.destinationCity.id, this.distanceBuffer, this.durationBuffer);
       routeColor = "black";
+    }
+    if(this.selectedAlgorithm === 2){
+      result = this.wayEdgeService.findAnnealingOptimalPath(this.sourceCity.id, this.destinationCity.id, this.distanceBuffer, this.durationBuffer);
+      routeColor = "green";
     }
 
     if(result)
