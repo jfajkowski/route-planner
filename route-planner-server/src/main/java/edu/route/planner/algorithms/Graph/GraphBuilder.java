@@ -10,12 +10,12 @@ import java.util.Collection;
 public class GraphBuilder {
 
     @Autowired
-    private static WayEdgeService wayEdgeService;
+    private WayEdgeService wayEdgeService;
 
-    private static NodesGraph graph = new NodesGraph();
+    private NodesGraph graph = new NodesGraph();
 
     public GraphBuilder(WayEdgeService wayEdgeService){
-        GraphBuilder.wayEdgeService = wayEdgeService;
+        this.wayEdgeService = wayEdgeService;
     }
 
     public NodesGraph loadEdges( Collection<WayEdge> wayEdges, Collection<CityNode> nodes, Long destinationId){

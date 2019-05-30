@@ -35,32 +35,34 @@ public class RouterAlgorithm {
         paths.addAll(reversedYen.calculate());
 
         List<Edge> longest = new ArrayList<>();
-        Double longestPathDistance = 0.0;
-        Double longestPathDuration = 0.0;
+//        Double longestPathDistance = 0.0;
+//        Double longestPathDuration = 0.0;
+        int longestLength = 0;
         for (List<Edge> p: paths){
-            Double dist = Path.calculatePathDistance(p);
-            if(dist > longestPathDistance){
+//            Double dist = Path.calculatePathDistance(p);
+            int l = p.size();
+            if(l > longestLength) {
                 longest = p;
-                longestPathDistance = dist;
-                longestPathDuration = Path.calculatePathDuration(p);
+//                longestPathDistance = dist;
+//                longestPathDuration = Path.calculatePathDuration(p);
             }
         }
 
-        List<Edge> lasting = new ArrayList<>();
-        Double lastingPathDuration = 0.0;
-        Double lastingPathDistance = 0.0;
-        for (List<Edge> p: paths){
-            Double duration = Path.calculatePathDuration(p);
-            if(duration > lastingPathDuration){
-                lasting = p;
-                lastingPathDuration = duration;
-                lastingPathDistance = Path.calculatePathDistance(p);
-            }
-        }
+//        List<Edge> lasting = new ArrayList<>();
+//        Double lastingPathDuration = 0.0;
+//        Double lastingPathDistance = 0.0;
+//        for (List<Edge> p: paths){
+//            Double duration = Path.calculatePathDuration(p);
+//            if(duration > lastingPathDuration){
+//                lasting = p;
+//                lastingPathDuration = duration;
+//                lastingPathDistance = Path.calculatePathDistance(p);
+//            }
+//        }
 
 
-        if (longestPathDistance > lastingPathDistance && longestPathDuration > lastingPathDuration) return longest;
-        if (lastingPathDistance > longestPathDistance && lastingPathDuration > longestPathDuration) return lasting;
+//        if (longestPathDistance > lastingPathDistance && longestPathDuration > lastingPathDuration) return longest;
+//        if (lastingPathDistance > longestPathDistance && lastingPathDuration > longestPathDuration) return lasting;
 
         //if it cannot be simply settled which route is better, the longest one is returned.
         return longest;

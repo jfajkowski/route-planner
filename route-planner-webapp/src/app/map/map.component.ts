@@ -86,7 +86,7 @@ export class MapComponent implements OnInit {
             return new CityMarker(cityNode, latlng, {
               clickable: true,
               icon: this.customIcon,
-              title: cityNode.cityName.toString() + ' (' + cityNode.id + ')'
+              title: cityNode.cityName + ' (' + cityNode.id + ')'
             })
           }
         }).addTo(cities).on('click', function (e) {

@@ -39,6 +39,7 @@ class YenAlgorithm {
         kShortestPaths.add(shortestPath);
 
         for(int k = 1; k < K; k++){
+            if(kShortestPaths.size() <= (k-1)) break;
             List<Edge> previousPath = kShortestPaths.get(k - 1);
 
             for(int i = 0; i < previousPath.size(); ++i){
@@ -103,7 +104,7 @@ class YenAlgorithm {
             Double pathDist = Path.calculatePathDistance(shortestPath);
             Double pathDur = Path.calculatePathDuration(shortestPath);
             if( pathDist > maxDistance || pathDur > maxDuration)
-                break;
+                continue;
 
             kShortestPaths.add(shortestPath);
         }

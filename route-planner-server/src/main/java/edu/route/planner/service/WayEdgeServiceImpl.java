@@ -100,12 +100,13 @@ public class WayEdgeServiceImpl implements WayEdgeService {
                 destination,
                 graph,
                 reversedGraph,
-                1000 * 1000.0, //1000km
-                10 * 60 * 60.0 //10h
+                distanceBuffer * 1000,
+                durationBuffer * 60 * 60.0
         );
 
         List<WayEdge> result = new ArrayList<>();
-        ra.calculateRoute().forEach(e -> result.add(findDirect(e.getStartId(), e.getDestinationId())));
+//        ra.calculateRoute().forEach(e -> result.add(findDirect(e.getStartId(), e.getDestinationId())));
+        ra.calculateRoute().forEach(e -> wayEdgeRepository.findById(e.getId()).ifPresent(result::add));
         return result;
     }
 

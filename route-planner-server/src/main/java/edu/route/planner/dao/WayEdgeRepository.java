@@ -13,4 +13,7 @@ public interface WayEdgeRepository extends CrudRepository<WayEdge, Long> {
 
     @Query("from WayEdge we where we.sourceCityNodeId=:a and we.destinationCityNodeId=:b")
     Optional<WayEdge> findByCityNodeIds(@Param("a") Long sourceCityNodeId, @Param("b") Long destinationCityNodeId);
+
+    @Query("from WayEdge we where we.id=:id")
+    Optional<WayEdge> findById(@Param("id") Long wayId);
 }

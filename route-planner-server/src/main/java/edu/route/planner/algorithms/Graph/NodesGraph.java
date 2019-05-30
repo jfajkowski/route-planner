@@ -52,10 +52,8 @@ public class NodesGraph {
 
     public NodesGraph(NodesGraph graph){
         this();
-        edges.putAll(graph.edges);
-        Map<Long, Vertex> newVertices = new HashMap<>();
-        graph.vertices.forEach(newVertices::put);
-        vertices.putAll(newVertices);
+        graph.edges.values().forEach(e -> edges.put(e.getId(), new Edge(e)));
+        graph.vertices.values().forEach(v -> vertices.put(v.getId(), new Vertex(v)));
     }
 
     private void removeConnectionsWithVertex(Long vertexId){
