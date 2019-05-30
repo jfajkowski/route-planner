@@ -19,6 +19,7 @@ public abstract class BruteForce {
     public static List<WayEdge> run(WayEdge directWayEdge, Collection<WayEdge> alternativeWayEdges,
                                  double distanceBuffer, double durationBuffer) {
 
+        logger.info("Considering {} way edges", alternativeWayEdges.size());
         List<WayEdge> result = singletonList(directWayEdge);
         long maxEdges = calculateMaxEdges(directWayEdge, alternativeWayEdges);
         double maxDistance = directWayEdge.getDistance() + distanceBuffer;
