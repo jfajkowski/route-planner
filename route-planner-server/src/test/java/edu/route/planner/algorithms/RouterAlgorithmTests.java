@@ -1,5 +1,6 @@
 package edu.route.planner.algorithms;
 
+import edu.route.planner.algorithms.Graph.Edge;
 import edu.route.planner.algorithms.Graph.GraphBuilder;
 import edu.route.planner.algorithms.Graph.NodesGraph;
 import edu.route.planner.algorithms.Graph.Vertex;
@@ -56,7 +57,7 @@ public class RouterAlgorithmTests {
                 1000 * 1000.0, //1000km
                 10 * 60 * 60.0 //10h
         );
-        List<Long> path = ra.calculateRoute();
+        List<Edge> path = ra.calculateRoute();
 
         Assert.assertTrue(path.size() > 3);
     }

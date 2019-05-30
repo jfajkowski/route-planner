@@ -1,6 +1,10 @@
 package edu.route.planner.service;
 
 import edu.route.planner.algorithms.BruteForce;
+import edu.route.planner.algorithms.Graph.GraphBuilder;
+import edu.route.planner.algorithms.Graph.NodesGraph;
+import edu.route.planner.algorithms.Graph.Vertex;
+import edu.route.planner.algorithms.RouterAlgorithm;
 import edu.route.planner.dao.CityNodeRepository;
 import edu.route.planner.dao.ProximityEdgeRepository;
 import edu.route.planner.dao.WayEdgeRepository;
@@ -32,22 +36,24 @@ public class WayEdgeServiceImpl implements WayEdgeService {
     public void recalculateCache() {
         wayEdgeRepository.deleteAll();
         for (ProximityEdge pe : proximityEdgeRepository.findAll()) {
-            wayEdgeRepository.save(findDirect(pe.getCityAId(), pe.getCityBId(), false));
+            wayEdgeRepository.save(findDirect(pe.getCityAId(), pe.getCityBId()));
         }
     }
 
     @Override
-    public WayEdge findDirect(Long sourceCityNodeId, Long destinationCityNodeId, boolean forceReload) {
+    public WayEdge findDirect(Long sourceCityNodeId, Long destinationCityNodeId) {
         Optional<WayEdge> result = wayEdgeRepository.findByCityNodeIds(sourceCityNodeId, destinationCityNodeId);
 
-        if (result.isPresent() && !forceReload) {
+        if (result.isPresent()) {
             return result.get();
         }
 
         try {
             CityNode sourceCityNode = cityNodeRepository.findById(sourceCityNodeId).orElseThrow();
             CityNode destinationCityNode = cityNodeRepository.findById(destinationCityNodeId).orElseThrow();
-            return Osrm.getFastestRoute(sourceCityNode, destinationCityNode);
+            WayEdge fastestRoute = Osrm.getFastestRoute(sourceCityNode, destinationCityNode);
+            wayEdgeRepository.save(fastestRoute);
+            return fastestRoute;
         } catch (IOException | NoSuchElementException e) {
             e.printStackTrace();
             return null;
@@ -55,9 +61,9 @@ public class WayEdgeServiceImpl implements WayEdgeService {
     }
 
     @Override
-    public List<WayEdge> findOptimal(Long sourceCityNodeId, Long destinationCityNodeId,
-                                     Double distanceBuffer, Double durationBuffer) {
-        WayEdge directWay = findDirect(sourceCityNodeId, destinationCityNodeId, false);
+    public List<WayEdge> findOptimalBruteForce(Long sourceCityNodeId, Long destinationCityNodeId,
+                                               Double distanceBuffer, Double durationBuffer) {
+        WayEdge directWay = findDirect(sourceCityNodeId, destinationCityNodeId);
 
         Collection<CityNode> cities = cityNodeRepository.findAllWithinBuffer(directWay.getGeometry(), distanceBuffer);
         Collection<Long> cityIds = cities.stream()
@@ -66,11 +72,41 @@ public class WayEdgeServiceImpl implements WayEdgeService {
         Collection<WayEdge> optionalWays = new HashSet<>();
         if (!cityIds.isEmpty()) {
             for (ProximityEdge proximityEdge : proximityEdgeRepository.findByCityIds(cityIds)) {
-                optionalWays.add(findDirect(proximityEdge.getCityAId(), proximityEdge.getCityBId(), false));
+                optionalWays.add(findDirect(proximityEdge.getCityAId(), proximityEdge.getCityBId()));
             }
         }
 
         return BruteForce.run(directWay, optionalWays, distanceBuffer, durationBuffer);
+    }
+
+    @Override
+    public List<WayEdge> findOptimalCustom(Long sourceCityNodeId, Long destinationCityNodeId, Double distanceBuffer, Double durationBuffer) {
+        List<CityNode> cityNodes = new ArrayList<>();
+        cityNodeRepository.findAll().forEach(cityNodes::add);
+
+        List<WayEdge> wayEdges = new ArrayList<>();
+        wayEdgeRepository.findAll().forEach(wayEdges::add);
+
+        GraphBuilder gb = new GraphBuilder(this);
+        NodesGraph graph = gb.loadEdges(wayEdges, cityNodes, destinationCityNodeId);
+        GraphBuilder reversedGb = new GraphBuilder(this);
+        NodesGraph reversedGraph = reversedGb.loadEdges(wayEdges, cityNodes, sourceCityNodeId);
+
+        Vertex source = graph.getVertex(sourceCityNodeId);
+        Vertex destination = graph.getVertex(destinationCityNodeId);
+
+        RouterAlgorithm ra = new RouterAlgorithm(
+                source,
+                destination,
+                graph,
+                reversedGraph,
+                1000 * 1000.0, //1000km
+                10 * 60 * 60.0 //10h
+        );
+
+        List<WayEdge> result = new ArrayList<>();
+        ra.calculateRoute().forEach(e -> result.add(findDirect(e.getStartId(), e.getDestinationId())));
+        return result;
     }
 
     @Override

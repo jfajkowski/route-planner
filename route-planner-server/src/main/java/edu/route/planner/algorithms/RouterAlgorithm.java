@@ -4,10 +4,8 @@ import edu.route.planner.algorithms.Graph.Edge;
 import edu.route.planner.algorithms.Graph.NodesGraph;
 import edu.route.planner.algorithms.Graph.Path;
 import edu.route.planner.algorithms.Graph.Vertex;
-import edu.route.planner.model.WayEdge;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 public class RouterAlgorithm {
@@ -27,7 +25,7 @@ public class RouterAlgorithm {
         this.maxDuration = maxDuration;
     }
 
-    public List<WayEdge> calculateRoute(){
+    public List<Edge> calculateRoute() {
         Vertex newSource = new Vertex(reversedGraph.getVertex(destination.getId()));
         Vertex newDestination = new Vertex(reversedGraph.getVertex(source.getId()));
 
