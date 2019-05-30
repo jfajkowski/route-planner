@@ -62,7 +62,7 @@ public class BruteForceTest {
 
     @Test
     public void run() {
-        long actualNodesSize = BruteForce.run(DIRECT_WAY_EDGE, alternativeWayEdges, distanceBuffer, durationBuffer).size();
+        long actualNodesSize = new BruteForce(DIRECT_WAY_EDGE, alternativeWayEdges, distanceBuffer, durationBuffer).run().size();
         assertThat(actualNodesSize).isEqualTo(expectedNodesSize);
     }
 }

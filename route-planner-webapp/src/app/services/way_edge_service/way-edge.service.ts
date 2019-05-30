@@ -34,7 +34,7 @@ export class WayEdgeService {
       .set("destination", destination.toString())
       .set("distanceBuffer", distanceBuffer.toString())
       .set("durationBuffer", durationBuffer.toString());
-    return this.http.get<GetRouteResponse>('/api/wayEdges/optimal', {params: params});
+    return this.http.get<GetRouteResponse>('/api/wayEdges/optimal/bruteforce', {params: params});
   }
 
   findAnnealingOptimalPath(source: number, destination: number, distanceBuffer: number, durationBuffer: number): Observable<GetRouteResponse> {

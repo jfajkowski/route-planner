@@ -3,6 +3,7 @@ package edu.route.planner.service;
 import edu.route.planner.algorithms.BruteForce;
 import edu.route.planner.algorithms.Graph.*;
 import edu.route.planner.algorithms.RouterAlgorithm;
+import edu.route.planner.algorithms.SimulatedAnnealing;
 import edu.route.planner.contracts.GetRouteResponse;
 import edu.route.planner.dao.CityNodeRepository;
 import edu.route.planner.dao.ProximityEdgeRepository;
@@ -74,8 +75,8 @@ public class WayEdgeServiceImpl implements WayEdgeService {
 
         Collection<WayEdge> optionalWays = findOptionalProximityGraphWayEdges(directWay, distanceInKmBuffer);
 
-        Collection<WayEdge> result = BruteForce.run(directWay, optionalWays, distanceInKmBuffer, durationInHBuffer);
-        return new GetRouteResponse(Path.calculatePathDistance(result), Path.calculatePathDuration(result), (List<WayEdge>)result);
+        List<WayEdge> result = new BruteForce(directWay, optionalWays, distanceInKmBuffer, durationInHBuffer).run();
+        return new GetRouteResponse(Path.calculatePathDistance(result), Path.calculatePathDuration(result), result);
     }
 
     @Override
@@ -111,6 +112,19 @@ public class WayEdgeServiceImpl implements WayEdgeService {
         calculatedPath.forEach(e -> wayEdgeRepository.findById(e.getId()).ifPresent(result::add));
 
         return new GetRouteResponse(Path.calculatePathDistance(calculatedPath), Path.calculatePathDuration(calculatedPath), result);
+    }
+
+    @Override
+    public GetRouteResponse findOptimalSimulatedAnnealing(Long sourceCityNodeId, Long destinationCityNodeId,
+                                                          Double distanceBuffer, Double durationBuffer) {
+        double distanceInKmBuffer = distanceBuffer * 1000;
+        double durationInHBuffer = durationBuffer * 60 * 60;
+        WayEdge directWay = findDirect(sourceCityNodeId, destinationCityNodeId);
+
+        List<WayEdge> optionalWays = findOptionalProximityGraphWayEdges(directWay, distanceInKmBuffer);
+
+        List<WayEdge> result = new SimulatedAnnealing(directWay, optionalWays, distanceInKmBuffer, durationInHBuffer).run();
+        return new GetRouteResponse(Path.calculatePathDistance(result), Path.calculatePathDuration(result), result);
     }
 
     private List<WayEdge> findOptionalProximityGraphWayEdges(WayEdge directWay, Double distanceBuffer) {

@@ -60,7 +60,7 @@ public class Benchmark {
         CityNode startCityNode = cityNodeRepository.findByCityName(startCity);
         CityNode targetCityNode = cityNodeRepository.findByCityName(targetCity);
 
-        double kilometers = 10;
+        double kilometers = 30;
         double hours = 6;
 
         measureTime("Custom", () -> {
@@ -70,6 +70,10 @@ public class Benchmark {
         measureTime("Brute force", () -> {
             List<WayEdge> optimalBruteForce = (List<WayEdge>) wayEdgeService.findOptimalBruteForce(startCityNode.getId(), targetCityNode.getId(), kilometers, hours).route;
             logger.info("Brute force: {}", BruteForce.toString(optimalBruteForce));
+        });
+        measureTime("Simulated annealing", () -> {
+            List<WayEdge> optimalSimulatedAnnealing = (List<WayEdge>) wayEdgeService.findOptimalSimulatedAnnealing(startCityNode.getId(), targetCityNode.getId(), kilometers, hours).route;
+            logger.info("Simulated annealing: {}", BruteForce.toString(optimalSimulatedAnnealing));
         });
     }
 

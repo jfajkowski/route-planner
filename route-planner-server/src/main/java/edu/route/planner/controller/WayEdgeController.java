@@ -28,8 +28,8 @@ public class WayEdgeController {
         return wayEdgeService.findDirect(sourceCityNodeId, destinationCityNodeId);
     }
 
-    @GetMapping("wayEdges/optimal")
-    public GetRouteResponse findOptimal(
+    @GetMapping("wayEdges/optimal/bruteforce")
+    public GetRouteResponse findOptimalBruteForce(
             @RequestParam("source") Long sourceCityNodeId,
             @RequestParam("destination") Long destinationCityNodeId,
             @RequestParam("distanceBuffer") Double distanceBuffer,
@@ -38,7 +38,7 @@ public class WayEdgeController {
     }
 
     @GetMapping("wayEdges/optimal/router")
-    public GetRouteResponse findOptimalByRouter(
+    public GetRouteResponse findOptimalRouter(
             @RequestParam("source") Long sourceCityNodeId,
             @RequestParam("destination") Long destinationCityNodeId,
             @RequestParam("distanceBuffer") Double distanceBuffer,
@@ -46,5 +46,12 @@ public class WayEdgeController {
         return wayEdgeService.findOptimalCustom(sourceCityNodeId, destinationCityNodeId, distanceBuffer, durationBuffer);
     }
 
-
+    @GetMapping("wayEdges/optimal/annealing")
+    public GetRouteResponse findOptimalSimulatedAnnealing(
+            @RequestParam("source") Long sourceCityNodeId,
+            @RequestParam("destination") Long destinationCityNodeId,
+            @RequestParam("distanceBuffer") Double distanceBuffer,
+            @RequestParam("durationBuffer") Double durationBuffer) {
+        return wayEdgeService.findOptimalSimulatedAnnealing(sourceCityNodeId, destinationCityNodeId, distanceBuffer, durationBuffer);
+    }
 }
