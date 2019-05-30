@@ -1,6 +1,7 @@
 package edu.route.planner.service;
 
 import edu.route.planner.algorithms.BruteForce;
+import edu.route.planner.algorithms.Graph.Edge;
 import edu.route.planner.algorithms.Graph.GraphBuilder;
 import edu.route.planner.algorithms.Graph.NodesGraph;
 import edu.route.planner.algorithms.Graph.Vertex;
@@ -78,9 +79,11 @@ public class WayEdgeServiceImpl implements WayEdgeService {
 
     @Override
     public List<WayEdge> findOptimalCustom(Long sourceCityNodeId, Long destinationCityNodeId, Double distanceBuffer, Double durationBuffer) {
+        Double distanceInKmBuffer = distanceBuffer * 1000;
+        Double durationInHBuffer = durationBuffer * 60 * 60;
 
         WayEdge directWay = findDirect(sourceCityNodeId, destinationCityNodeId);
-        List<WayEdge> wayEdges = findOptionalProximityGraphWayEdges(directWay, distanceBuffer);
+        List<WayEdge> wayEdges = findOptionalProximityGraphWayEdges(directWay, distanceInKmBuffer);
         Set<Long> cityNodeIds = new HashSet<>(toAllCityIds(wayEdges));
 
         GraphBuilder gb = new GraphBuilder(this);
@@ -96,8 +99,8 @@ public class WayEdgeServiceImpl implements WayEdgeService {
                 destination,
                 graph,
                 reversedGraph,
-                distanceBuffer * 1000,
-                durationBuffer * 60 * 60.0
+                distanceInKmBuffer,
+                durationInHBuffer
         );
 
         List<WayEdge> result = new ArrayList<>();
@@ -113,7 +116,8 @@ public class WayEdgeServiceImpl implements WayEdgeService {
                 .collect(toSet());
         List<WayEdge> optionalWays = new ArrayList<>();
         if (!cityIds.isEmpty()) {
-            for (ProximityEdge proximityEdge : proximityEdgeRepository.findByCityIds(cityIds)) {
+            Collection<ProximityEdge> pes = proximityEdgeRepository.findByCityIds(cityIds);
+            for (ProximityEdge proximityEdge : pes) {
                 optionalWays.add(findDirect(proximityEdge.getCityAId(), proximityEdge.getCityBId()));
             }
         }
