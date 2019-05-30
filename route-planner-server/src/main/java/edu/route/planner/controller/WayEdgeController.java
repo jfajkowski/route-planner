@@ -1,5 +1,6 @@
 package edu.route.planner.controller;
 
+import edu.route.planner.contracts.GetRouteResponse;
 import edu.route.planner.model.WayEdge;
 import edu.route.planner.service.WayEdgeService;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,7 +29,7 @@ public class WayEdgeController {
     }
 
     @GetMapping("wayEdges/optimal")
-    public Iterable<WayEdge> findOptimal(
+    public GetRouteResponse findOptimal(
             @RequestParam("source") Long sourceCityNodeId,
             @RequestParam("destination") Long destinationCityNodeId,
             @RequestParam("distanceBuffer") Double distanceBuffer,
@@ -37,11 +38,13 @@ public class WayEdgeController {
     }
 
     @GetMapping("wayEdges/optimal/router")
-    public Iterable<WayEdge> findOptimalByRouter(
+    public GetRouteResponse findOptimalByRouter(
             @RequestParam("source") Long sourceCityNodeId,
             @RequestParam("destination") Long destinationCityNodeId,
             @RequestParam("distanceBuffer") Double distanceBuffer,
             @RequestParam("durationBuffer") Double durationBuffer) {
         return wayEdgeService.findOptimalCustom(sourceCityNodeId, destinationCityNodeId, distanceBuffer, durationBuffer);
     }
+
+
 }

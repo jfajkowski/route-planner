@@ -7,7 +7,7 @@
 
   <div class="w3-row-padding w3-margin-bottom">
     <div class="w3-quarter">
-      <div class="w3-container w3-blue w3-padding-16">
+      <div class="w3-container w3-blue w3-padding-16 w3-border w3-hover-shadow">
         <label>
           <input (ngModelChange)="onDistanceChange($event)" [ngModel]="distanceBuffer" title="distance" type="number">
         </label>
@@ -15,29 +15,30 @@
       </div>
     </div>
     <div class="w3-quarter">
-      <div class="w3-container w3-blue w3-padding-16">
+      <div class="w3-container w3-blue w3-padding-16 w3-border w3-hover-shadow">
         <label>
           <input (ngModelChange)="onDurationChange($event)" [ngModel]="durationBuffer" title="duration" type="number">
         </label>
         <h4>Duration Buffer (h)</h4>
       </div>
     </div>
-    <!--<div class="w3-quarter">-->
-    <!--<div class="w3-container w3-blue w3-padding-16">-->
-    <!--<label>-->
-    <!--<input [(ngModel)]="zoom" title="zoom" type="number">-->
-    <!--</label>-->
-    <!--<h4>Zoom</h4>-->
-    <!--</div>-->
-    <!--</div>-->
     <div class="w3-quarter">
-
+      <div class="w3-container w3-blue w3-padding-16 w3-center w3-border w3-hover-shadow" >
+        <div class="w3-dropdown-hover w3-hide-small w3-center w3-margin-top w3-margin-bottom w3-blue" >
+          <button class="w3-button w3-white" title="Notifications">{{algorithms[selectedAlgorithm].name}}<i class="fa fa-caret-down"></i></button>
+          <div class="w3-dropdown-content w3-card-4 w3-bar-block w3-center">
+            <button (click)=selectAlgorithm(0) class="w3-bar-item w3-button">Custom</button>
+            <button (click)=selectAlgorithm(1) class="w3-bar-item w3-button">Brut Force</button>
+            <!--<button (click)=selectAlgorithm(2) class="w3-bar-item w3-button">Annealing</button>-->
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
   <div class="w3-row-padding w3-margin-bottom">
     <div class="w3-quarter">
-      <div class="w3-container w3-blue w3-padding-16">
+      <div class="w3-container w3-blue w3-padding-16 w3-border w3-hover-shadow">
         <label>
           <input [ngModel]="sourceCity?.id" disabled title="sourceId" type="text">
         </label>
@@ -46,7 +47,7 @@
       </div>
     </div>
     <div class="w3-quarter">
-      <div class="w3-container w3-blue w3-padding-16">
+      <div class="w3-container w3-blue w3-padding-16 w3-border w3-hover-shadow">
         <label>
           <input [ngModel]="destinationCity?.id" disabled title="destinationId" type="text">
         </label>
@@ -56,8 +57,8 @@
     </div>
 
     <div class="w3-quarter">
-      <div class="w3-container w3-blue w3-padding-16">
-        <button (click)=getRouteByRouter()>Find route</button>
+      <div class="w3-container w3-blue w3-padding-16 w3-center w3-border w3-hover-shadow">
+        <button  class="w3-button w3-white w3-padding-large w3-margin-top w3-margin-bottom" (click)=getRouteByRouter()>Find route</button>
       </div>
     </div>
 
@@ -65,9 +66,27 @@
 
   <div class="w3-panel">
     <div class="w3-row-padding" style="margin:0 -16px">
-      <div class="w3-third"
+      <div class="w3-third w3-border w3-hover-shadow w3-blue"
            style="width: 100%; height: 100%">
-        <h5>Map</h5>
+        <div class="w3-row-padding w3-margin-bottom ">
+          <div class="w3-quarter">
+            <h5>Map</h5>
+          </div>
+          <div *ngIf="currentRoute !== null" class="w3-quarter">
+            <div class="w3-container w3-blue w3-padding-10 w3-margin-top w3-hover-shadow">
+              <h5>
+                Route distance: {{currentRoute.distance / 1000}} km
+              </h5>
+            </div>
+          </div>
+          <div *ngIf="currentRoute !== null" class="w3-quarter">
+            <div class="w3-container w3-blue w3-padding-10  w3-margin-top w3-hover-shadow">
+              <h5>
+                Route duration: {{currentRoute.duration / 60}} min
+              </h5>
+            </div>
+          </div>
+        </div>
         <div style="width: 100%; height: 700px">
           <div class="map"
                style="height: 100%; width: 100%"

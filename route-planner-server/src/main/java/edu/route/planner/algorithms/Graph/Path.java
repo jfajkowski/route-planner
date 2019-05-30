@@ -1,5 +1,7 @@
 package edu.route.planner.algorithms.Graph;
 
+import edu.route.planner.model.WayEdge;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,6 +46,22 @@ public class Path implements Comparable<Path> {
         Double result = 0.0;
         for (Edge e: edges)
             result += e.getDuration();
+
+        return result;
+    }
+
+    public static Double calculatePathDistance(Iterable<WayEdge> edges){
+        Double result = 0.0;
+        for(WayEdge we: edges)
+            result += we.getDistance();
+
+        return result;
+    }
+
+    public static Double calculatePathDuration(Iterable<WayEdge> edges){
+        Double result = 0.0;
+        for (WayEdge we: edges)
+            result += we.getDuration();
 
         return result;
     }

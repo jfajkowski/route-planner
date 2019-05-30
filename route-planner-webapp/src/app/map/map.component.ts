@@ -5,6 +5,8 @@ import {CityNodeService} from '../services/city_node_service/city-node.service';
 import {CityNode} from '../services/city_node_service/city-node';
 import {WayEdgeService} from "../services/way_edge_service/way-edge.service";
 import {WayEdge} from "../services/way_edge_service/way-edge";
+import {Observable} from "rxjs/index";
+import {GetRouteResponse} from "../contracts/get-route-response";
 
 class CityMarker extends Marker {
   city: CityNode;
@@ -24,11 +26,19 @@ class CityMarker extends Marker {
 export class MapComponent implements OnInit {
   center = new LatLng(52.219873, 21.012066);
   zoom = 8;
-  distanceBuffer = 100.0;
-  durationBuffer = 6.0;
+  distanceBuffer = 10.0;
+  durationBuffer = 1.0;
   sourceCity: CityNode;
   destinationCity: CityNode;
   map: Map;
+  selectedAlgorithm: number;
+  algorithms = [
+    {id: 0, name: "Custom"},
+    {id: 1, name: "Brut Force"},
+    {id: 2, name: "Select algorithm"}
+  ];
+
+  currentRoute: GetRouteResponse = null;
 
   options = {
     layers: [
@@ -50,6 +60,7 @@ export class MapComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.selectedAlgorithm = 2;
     this.sourceCity = new CityNode();
     this.sourceCity.id = null;
     this.destinationCity = new CityNode();
@@ -57,19 +68,39 @@ export class MapComponent implements OnInit {
   }
 
   onDurationChange(duration: number) {
-    this.distanceBuffer = duration;
+    this.durationBuffer = duration;
   }
 
   onDistanceChange(distance: number) {
     this.distanceBuffer = distance;
   }
 
+  selectAlgorithm(type: number){
+    this.selectedAlgorithm = type;
+  }
+
   getRouteByRouter() {
+    const self = this;
     console.log(this.sourceCity.id, this.destinationCity.id, this.distanceBuffer, this.durationBuffer);
-    this.wayEdgeService.findRouterOptimalPath(this.sourceCity.id, this.destinationCity.id, this.distanceBuffer, this.durationBuffer)
-      .subscribe((wayEdges: WayEdge[]) => {
-        for (const wayEdge of wayEdges) {
-          L.geoJSON(wayEdge.geometry, {style: {color: "red"}}).addTo(this.map);
+    let result: Observable<GetRouteResponse> = null;
+    let routeColor: string = "red";
+
+    if(this.selectedAlgorithm === 0){
+      result = this.wayEdgeService.findRouterOptimalPath(this.sourceCity.id, this.destinationCity.id, this.distanceBuffer, this.durationBuffer);
+
+    }
+    if(this.selectedAlgorithm === 1){
+      result = this.wayEdgeService.findBrutForceOptimalPath(this.sourceCity.id, this.destinationCity.id, this.distanceBuffer, this.durationBuffer);
+      routeColor = "black";
+    }
+
+    if(result)
+      result.subscribe((response: GetRouteResponse) => {
+        if(response){
+          self.currentRoute = response;
+          for (const wayEdge of response.route) {
+            L.geoJSON(wayEdge.geometry, {style: {color: routeColor}}).addTo(this.map);
+          }
         }
       });
   }

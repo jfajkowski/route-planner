@@ -1,10 +1,9 @@
 package edu.route.planner.service;
 
 import edu.route.planner.algorithms.BruteForce;
-import edu.route.planner.algorithms.Graph.GraphBuilder;
-import edu.route.planner.algorithms.Graph.NodesGraph;
-import edu.route.planner.algorithms.Graph.Vertex;
+import edu.route.planner.algorithms.Graph.*;
 import edu.route.planner.algorithms.RouterAlgorithm;
+import edu.route.planner.contracts.GetRouteResponse;
 import edu.route.planner.dao.CityNodeRepository;
 import edu.route.planner.dao.ProximityEdgeRepository;
 import edu.route.planner.dao.WayEdgeRepository;
@@ -67,7 +66,7 @@ public class WayEdgeServiceImpl implements WayEdgeService {
     }
 
     @Override
-    public List<WayEdge> findOptimalBruteForce(Long sourceCityNodeId, Long destinationCityNodeId,
+    public GetRouteResponse findOptimalBruteForce(Long sourceCityNodeId, Long destinationCityNodeId,
                                                Double distanceBuffer, Double durationBuffer) {
         double distanceInKmBuffer = distanceBuffer * 1000;
         double durationInHBuffer = durationBuffer * 60 * 60;
@@ -75,11 +74,12 @@ public class WayEdgeServiceImpl implements WayEdgeService {
 
         Collection<WayEdge> optionalWays = findOptionalProximityGraphWayEdges(directWay, distanceInKmBuffer);
 
-        return BruteForce.run(directWay, optionalWays, distanceInKmBuffer, durationInHBuffer);
+        Collection<WayEdge> result = BruteForce.run(directWay, optionalWays, distanceInKmBuffer, durationInHBuffer);
+        return new GetRouteResponse(Path.calculatePathDistance(result), Path.calculatePathDuration(result), (List<WayEdge>)result);
     }
 
     @Override
-    public List<WayEdge> findOptimalCustom(Long sourceCityNodeId, Long destinationCityNodeId, Double distanceBuffer, Double durationBuffer) {
+    public GetRouteResponse findOptimalCustom(Long sourceCityNodeId, Long destinationCityNodeId, Double distanceBuffer, Double durationBuffer) {
         Double distanceInKmBuffer = distanceBuffer * 1000;
         Double durationInHBuffer = durationBuffer * 60 * 60;
 
@@ -106,10 +106,11 @@ public class WayEdgeServiceImpl implements WayEdgeService {
                 durationInHBuffer
         );
 
+        List<Edge> calculatedPath = ra.calculateRoute();
         List<WayEdge> result = new ArrayList<>();
-//        ra.calculateRoute().forEach(e -> result.add(findDirect(e.getStartId(), e.getDestinationId())));
-        ra.calculateRoute().forEach(e -> wayEdgeRepository.findById(e.getId()).ifPresent(result::add));
-        return result;
+        calculatedPath.forEach(e -> wayEdgeRepository.findById(e.getId()).ifPresent(result::add));
+
+        return new GetRouteResponse(Path.calculatePathDistance(calculatedPath), Path.calculatePathDuration(calculatedPath), result);
     }
 
     private List<WayEdge> findOptionalProximityGraphWayEdges(WayEdge directWay, Double distanceBuffer) {

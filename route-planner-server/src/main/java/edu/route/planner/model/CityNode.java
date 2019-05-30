@@ -36,4 +36,8 @@ public class CityNode {
     public Geometry getGeom() {
         return geom;
     }
+
+    public String getCityName() {
+        return cityName;
+    }
 }

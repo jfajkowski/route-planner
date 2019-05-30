@@ -71,7 +71,7 @@ public class SimpleRouterTests extends RouterTestsContextProvider {
         Long startCityId = cityNodeRepository.findByCityName(startCityName).getId();
         Long destCityId = cityNodeRepository.findByCityName(destCityName).getId();
 
-        List<WayEdge> optimal = wayEdgeService.findOptimalBruteForce(startCityId, destCityId, (double) additionalKms, (double) additionalTime);
+        List<WayEdge> optimal = (List<WayEdge>) wayEdgeService.findOptimalBruteForce(startCityId, destCityId, (double) additionalKms, (double) additionalTime).route;
 
         Set<CityNode> algorithmCitiesToVisit = stream(cityNodeRepository.findAllById(toAllCityIds(optimal)).spliterator(), false).collect(toSet()); //TODO: ODPALENIE ALGORYTMU Z PIERWSZYMI CZTEREMA PARAMETRAMI START, DEST CITY i oba additionale
         Set<CityNode> actualCitiesToVisit = algorithmCitiesToVisit.stream().distinct().collect(toSet());

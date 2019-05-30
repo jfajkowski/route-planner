@@ -64,11 +64,11 @@ public class Benchmark {
         double hours = 6;
 
         measureTime("Custom", () -> {
-            List<WayEdge> optimalCustom = wayEdgeService.findOptimalCustom(startCityNode.getId(), targetCityNode.getId(), kilometers, hours);
+            List<WayEdge> optimalCustom = (List<WayEdge>) wayEdgeService.findOptimalCustom(startCityNode.getId(), targetCityNode.getId(), kilometers, hours).route;
             logger.info("Custom: {}", BruteForce.toString(optimalCustom));
         });
         measureTime("Brute force", () -> {
-            List<WayEdge> optimalBruteForce = wayEdgeService.findOptimalBruteForce(startCityNode.getId(), targetCityNode.getId(), kilometers, hours);
+            List<WayEdge> optimalBruteForce = (List<WayEdge>) wayEdgeService.findOptimalBruteForce(startCityNode.getId(), targetCityNode.getId(), kilometers, hours).route;
             logger.info("Brute force: {}", BruteForce.toString(optimalBruteForce));
         });
     }
