@@ -50,7 +50,10 @@ export class MapComponent implements OnInit {
   }
 
   ngOnInit() {
-
+    this.sourceCity = new CityNode();
+    this.sourceCity.id = null;
+    this.destinationCity = new CityNode();
+    this.destinationCity.id = null;
   }
 
   onDurationChange(duration: number) {
