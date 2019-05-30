@@ -63,15 +63,26 @@ public class SimulatedAnnealing extends Algorithm {
 
     private List<WayEdge> modify(List<WayEdge> previousResult) {
         if (previousResult.size() > 1) {
-            int lastEdgeIndex = random.nextInt(previousResult.size() - 1);
+            int lastEdgeIndex = calculateLastEdgeIndex(previousResult);
             if (lastEdgeIndex != 0) {
                 List<WayEdge> result = new ArrayList<>(previousResult.subList(0, lastEdgeIndex));
-                List<WayEdge> wayEdges = depthFirstSearch(result.get(result.size() - 1).getDestinationCityNodeId(), result);
-                return wayEdges;
+                return depthFirstSearch(result.get(result.size() - 1).getDestinationCityNodeId(), result);
             }
         }
-        List<WayEdge> wayEdges = depthFirstSearch(directWayEdge.getSourceCityNodeId(), new ArrayList<>());
-        return wayEdges;
+        return depthFirstSearch(directWayEdge.getSourceCityNodeId(), new ArrayList<>());
+    }
+
+    private int calculateLastEdgeIndex(List<WayEdge> edges) {
+        int total = (1 + edges.size()) / 2 * edges.size();
+        int pick = random.nextInt(total);
+        int current = 0;
+        for (int i = 0; i < edges.size(); i++) {
+            current += i + 1;
+            if (current > pick) {
+                return i;
+            }
+        }
+        return 0;
     }
 
     private List<WayEdge> depthFirstSearch(long currentNode, List<WayEdge> result) {
