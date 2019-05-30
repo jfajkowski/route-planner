@@ -19,7 +19,7 @@ public abstract class BruteForce {
     public static List<WayEdge> run(WayEdge directWayEdge, Collection<WayEdge> alternativeWayEdges,
                                  double distanceBuffer, double durationBuffer) {
 
-        logger.info("Considering {} way edges", alternativeWayEdges.size());
+        logger.debug("Considering {} way edges", alternativeWayEdges.size());
         List<WayEdge> result = singletonList(directWayEdge);
         long maxEdges = calculateMaxEdges(directWayEdge, alternativeWayEdges);
         double maxDistance = directWayEdge.getDistance() + distanceBuffer;
@@ -60,7 +60,7 @@ public abstract class BruteForce {
                 if (isFinal(currentResult, destinationNode)) {
                     if (isBetter(currentResult, bestResult)) {
                         bestResult = new ArrayList<>(currentResult);
-                        logger.info("New best result: {}", toString(bestResult));
+                        logger.debug("New best result: {}", toString(bestResult));
                     }
                 } else {
                     long nextNode = nextEdge.getDestinationCityNodeId();
@@ -96,7 +96,7 @@ public abstract class BruteForce {
     }
 
     public static List<Long> toAllCityIds(List<WayEdge> edges) {
-        if (edges.size() <= 1) {
+        if (edges.isEmpty()) {
             return emptyList();
         }
         List<Long> cityIds = new ArrayList<>(edges.size() + 1);
@@ -114,7 +114,8 @@ public abstract class BruteForce {
     }
 
     public static String toString(List<WayEdge> edges) {
-        return String.format("size %s, distance %s, duration %s, nodes %s", edges.size(),
-                summary(edges, WayEdge::getDistance), summary(edges, WayEdge::getDuration), toAllCityIds(edges));
+        List<Long> cityIds = toAllCityIds(edges);
+        return String.format("size %s, distance %s, duration %s, nodes %s", cityIds.size(),
+                summary(edges, WayEdge::getDistance), summary(edges, WayEdge::getDuration), cityIds);
     }
 }

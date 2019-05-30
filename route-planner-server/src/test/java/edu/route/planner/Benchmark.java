@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.List;
 
 import static java.util.Arrays.asList;
+import static org.apache.commons.lang3.time.DurationFormatUtils.formatDurationHMS;
 
 @RunWith(Parameterized.class)
 @SpringBootTest
@@ -60,11 +61,22 @@ public class Benchmark {
         CityNode targetCityNode = cityNodeRepository.findByCityName(targetCity);
 
         double kilometers = 10;
-        double minutes = 60;
+        double hours = 6;
 
-        List<WayEdge> optimalCustom = wayEdgeService.findOptimalCustom(startCityNode.getId(), targetCityNode.getId(), kilometers, minutes);
-        logger.info("Custom: {}", BruteForce.toString(optimalCustom));
-        List<WayEdge> optimalBruteForce = wayEdgeService.findOptimalBruteForce(startCityNode.getId(), targetCityNode.getId(), kilometers, minutes);
-        logger.info("Brute force: {}", BruteForce.toString(optimalBruteForce));
+        measureTime("Custom", () -> {
+            List<WayEdge> optimalCustom = wayEdgeService.findOptimalCustom(startCityNode.getId(), targetCityNode.getId(), kilometers, hours);
+            logger.info("Custom: {}", BruteForce.toString(optimalCustom));
+        });
+        measureTime("Brute force", () -> {
+            List<WayEdge> optimalBruteForce = wayEdgeService.findOptimalBruteForce(startCityNode.getId(), targetCityNode.getId(), kilometers, hours);
+            logger.info("Brute force: {}", BruteForce.toString(optimalBruteForce));
+        });
+    }
+
+    private void measureTime(String name, Runnable runnable) {
+        long startTime = System.currentTimeMillis();
+        runnable.run();
+        long estimatedTime = System.currentTimeMillis() - startTime;
+        logger.info("{} took: {}", name, formatDurationHMS(estimatedTime));
     }
 }
