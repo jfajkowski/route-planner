@@ -14,7 +14,8 @@ public interface CityNodeRepository extends CrudRepository<CityNode, Long> {
 
     CityNode findByCityName(String cityName);
 
+    // It may or may not contain start and end way's nodes - depends on the buffer
     @Query(nativeQuery = true,
-            value = "select * from city_nodes cn where st_contains(st_buffer(:w, :b), cn.geom)")
+            value = "select * from city_nodes cn where st_intersects(st_buffer(geography(:w), :b), geography(cn.geom))")
     Collection<CityNode> findAllWithinBuffer(@Param("w") Geometry way, @Param("b") Double buffer);
 }

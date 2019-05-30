@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.*;
 
+import static edu.route.planner.algorithms.BruteForce.toAllCityIds;
 import static java.util.stream.Collectors.toSet;
 
 @Service
@@ -61,36 +62,31 @@ public class WayEdgeServiceImpl implements WayEdgeService {
     }
 
     @Override
+    public Iterable<WayEdge> findAll() {
+        return wayEdgeRepository.findAll();
+    }
+
+    @Override
     public List<WayEdge> findOptimalBruteForce(Long sourceCityNodeId, Long destinationCityNodeId,
                                                Double distanceBuffer, Double durationBuffer) {
         WayEdge directWay = findDirect(sourceCityNodeId, destinationCityNodeId);
 
-        Collection<CityNode> cities = cityNodeRepository.findAllWithinBuffer(directWay.getGeometry(), distanceBuffer);
-        Collection<Long> cityIds = cities.stream()
-                .map(CityNode::getId)
-                .collect(toSet());
-        Collection<WayEdge> optionalWays = new HashSet<>();
-        if (!cityIds.isEmpty()) {
-            for (ProximityEdge proximityEdge : proximityEdgeRepository.findByCityIds(cityIds)) {
-                optionalWays.add(findDirect(proximityEdge.getCityAId(), proximityEdge.getCityBId()));
-            }
-        }
+        Collection<WayEdge> optionalWays = findOptionalProximityGraphWayEdges(directWay, distanceBuffer);
 
         return BruteForce.run(directWay, optionalWays, distanceBuffer, durationBuffer);
     }
 
     @Override
     public List<WayEdge> findOptimalCustom(Long sourceCityNodeId, Long destinationCityNodeId, Double distanceBuffer, Double durationBuffer) {
-        List<CityNode> cityNodes = new ArrayList<>();
-        cityNodeRepository.findAll().forEach(cityNodes::add);
 
-        List<WayEdge> wayEdges = new ArrayList<>();
-        wayEdgeRepository.findAll().forEach(wayEdges::add);
+        WayEdge directWay = findDirect(sourceCityNodeId, destinationCityNodeId);
+        List<WayEdge> wayEdges = findOptionalProximityGraphWayEdges(directWay, distanceBuffer);
+        Set<Long> cityNodeIds = new HashSet<>(toAllCityIds(wayEdges));
 
         GraphBuilder gb = new GraphBuilder(this);
-        NodesGraph graph = gb.loadEdges(wayEdges, cityNodes, destinationCityNodeId);
+        NodesGraph graph = gb.loadEdges(wayEdges, cityNodeIds, destinationCityNodeId);
         GraphBuilder reversedGb = new GraphBuilder(this);
-        NodesGraph reversedGraph = reversedGb.loadEdges(wayEdges, cityNodes, sourceCityNodeId);
+        NodesGraph reversedGraph = reversedGb.loadEdges(wayEdges, cityNodeIds, sourceCityNodeId);
 
         Vertex source = graph.getVertex(sourceCityNodeId);
         Vertex destination = graph.getVertex(destinationCityNodeId);
@@ -110,8 +106,17 @@ public class WayEdgeServiceImpl implements WayEdgeService {
         return result;
     }
 
-    @Override
-    public Iterable<WayEdge> findAll() {
-        return wayEdgeRepository.findAll();
+    private List<WayEdge> findOptionalProximityGraphWayEdges(WayEdge directWay, Double distanceBuffer) {
+        Collection<CityNode> cities = cityNodeRepository.findAllWithinBuffer(directWay.getGeometry(), distanceBuffer / 2);
+        Collection<Long> cityIds = cities.stream()
+                .map(CityNode::getId)
+                .collect(toSet());
+        List<WayEdge> optionalWays = new ArrayList<>();
+        if (!cityIds.isEmpty()) {
+            for (ProximityEdge proximityEdge : proximityEdgeRepository.findByCityIds(cityIds)) {
+                optionalWays.add(findDirect(proximityEdge.getCityAId(), proximityEdge.getCityBId()));
+            }
+        }
+        return optionalWays;
     }
 }

@@ -1,6 +1,5 @@
 package edu.route.planner.algorithms.Graph;
 
-import edu.route.planner.model.CityNode;
 import edu.route.planner.model.WayEdge;
 import edu.route.planner.service.WayEdgeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,9 +17,9 @@ public class GraphBuilder {
         this.wayEdgeService = wayEdgeService;
     }
 
-    public NodesGraph loadEdges( Collection<WayEdge> wayEdges, Collection<CityNode> nodes, Long destinationId){
-        for(CityNode cn: nodes){
-            Vertex v = new Vertex(cn.getId(), wayEdgeService.findDirect(cn.getId(), destinationId).getDistance());
+    public NodesGraph loadEdges(Collection<WayEdge> wayEdges, Collection<Long> cityNodeIds, Long destinationId) {
+        for (Long cityNodeId : cityNodeIds) {
+            Vertex v = new Vertex(cityNodeId, wayEdgeService.findDirect(cityNodeId, destinationId).getDistance());
             for (WayEdge we: wayEdges){
                 Edge e = new Edge(we.getId(), we.getSourceCityNodeId(), we.getDestinationCityNodeId(), we.getDistance(), we.getDuration());
                 if(v.getId().equals(e.getStartId()))
