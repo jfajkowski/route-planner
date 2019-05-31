@@ -52,8 +52,8 @@ export class MapComponent implements OnInit {
 
   customIcon = L.icon({
     iconUrl: '../assets/marker.png',
-    iconSize: [20, 26],
-    iconAnchor: [10, 26]
+    iconSize: [16, 16],
+    iconAnchor: [8, 8]
   });
 
   constructor(private cityNodeService: CityNodeService, private wayEdgeService: WayEdgeService) {

@@ -1,5 +1,6 @@
 package edu.route.planner.service;
 
+import edu.route.planner.algorithms.Algorithm;
 import edu.route.planner.algorithms.BruteForce;
 import edu.route.planner.algorithms.Graph.*;
 import edu.route.planner.algorithms.RouterAlgorithm;
@@ -18,9 +19,11 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.function.Supplier;
 
 import static edu.route.planner.algorithms.BruteForce.toAllCityIds;
 import static java.util.stream.Collectors.toSet;
+import static org.apache.commons.lang3.time.DurationFormatUtils.formatDurationHMS;
 
 @Service
 public class WayEdgeServiceImpl implements WayEdgeService {
@@ -76,10 +79,10 @@ public class WayEdgeServiceImpl implements WayEdgeService {
         double distanceInKmBuffer = distanceBuffer * 1000;
         double durationInHBuffer = durationBuffer * 60 * 60;
         WayEdge directWay = findDirect(sourceCityNodeId, destinationCityNodeId);
-
         Collection<WayEdge> optionalWays = findOptionalProximityGraphWayEdges(directWay, distanceInKmBuffer);
 
-        List<WayEdge> result = new BruteForce(directWay, optionalWays, distanceInKmBuffer, durationInHBuffer).run();
+        List<WayEdge> result = printLog("Brute force",
+                () -> new BruteForce(directWay, optionalWays, distanceInKmBuffer, durationInHBuffer).run());
         return new GetRouteResponse(Path.calculatePathDistance(result), Path.calculatePathDuration(result), result);
     }
 
@@ -94,28 +97,32 @@ public class WayEdgeServiceImpl implements WayEdgeService {
         cityNodeIds.add(directWay.getSourceCityNodeId());
         cityNodeIds.add(directWay.getDestinationCityNodeId());
 
-        GraphBuilder gb = new GraphBuilder(this);
-        NodesGraph graph = gb.loadEdges(wayEdges, cityNodeIds, destinationCityNodeId);
-        GraphBuilder reversedGb = new GraphBuilder(this);
-        NodesGraph reversedGraph = reversedGb.loadEdges(wayEdges, cityNodeIds, sourceCityNodeId);
+        List<WayEdge> result = printLog("Custom", () -> {
+            GraphBuilder gb = new GraphBuilder(this);
+            NodesGraph graph = gb.loadEdges(wayEdges, cityNodeIds, destinationCityNodeId);
+            GraphBuilder reversedGb = new GraphBuilder(this);
+            NodesGraph reversedGraph = reversedGb.loadEdges(wayEdges, cityNodeIds, sourceCityNodeId);
 
-        Vertex source = graph.getVertex(sourceCityNodeId);
-        Vertex destination = graph.getVertex(destinationCityNodeId);
+            Vertex source = graph.getVertex(sourceCityNodeId);
+            Vertex destination = graph.getVertex(destinationCityNodeId);
 
-        RouterAlgorithm ra = new RouterAlgorithm(
-                source,
-                destination,
-                graph,
-                reversedGraph,
-                distanceInKmBuffer,
-                durationInHBuffer
-        );
+            RouterAlgorithm ra = new RouterAlgorithm(
+                    source,
+                    destination,
+                    graph,
+                    reversedGraph,
+                    distanceInKmBuffer,
+                    durationInHBuffer
+            );
 
-        List<Edge> calculatedPath = ra.calculateRoute();
-        List<WayEdge> result = new ArrayList<>();
-        calculatedPath.forEach(e -> wayEdgeRepository.findById(e.getId()).ifPresent(result::add));
+            List<Edge> calculatedPath = ra.calculateRoute();
+            List<WayEdge> edges = new ArrayList<>();
+            calculatedPath.forEach(e -> wayEdgeRepository.findById(e.getId()).ifPresent(edges::add));
+            return edges;
+        });
 
-        return new GetRouteResponse(Path.calculatePathDistance(calculatedPath), Path.calculatePathDuration(calculatedPath), result);
+
+        return new GetRouteResponse(Path.calculatePathDistance(result), Path.calculatePathDuration(result), result);
     }
 
     @Override
@@ -124,11 +131,19 @@ public class WayEdgeServiceImpl implements WayEdgeService {
         double distanceInKmBuffer = distanceBuffer * 1000;
         double durationInHBuffer = durationBuffer * 60 * 60;
         WayEdge directWay = findDirect(sourceCityNodeId, destinationCityNodeId);
-
         List<WayEdge> optionalWays = findOptionalProximityGraphWayEdges(directWay, distanceInKmBuffer);
 
-        List<WayEdge> result = new SimulatedAnnealing(directWay, optionalWays, distanceInKmBuffer, durationInHBuffer).run();
+        List<WayEdge> result = printLog("Simulated annealing",
+                () -> new SimulatedAnnealing(directWay, optionalWays, distanceInKmBuffer, durationInHBuffer).run());
         return new GetRouteResponse(Path.calculatePathDistance(result), Path.calculatePathDuration(result), result);
+    }
+
+    private List<WayEdge> printLog(String name, Supplier<List<WayEdge>> supplier) {
+        long startTime = System.currentTimeMillis();
+        List<WayEdge> edges = supplier.get();
+        long estimatedTime = System.currentTimeMillis() - startTime;
+        logger.info("{} took {}, result: {}", name, formatDurationHMS(estimatedTime), Algorithm.toString(edges));
+        return edges;
     }
 
     private List<WayEdge> findOptionalProximityGraphWayEdges(WayEdge directWay, Double distanceBuffer) {
